@@ -1,0 +1,4 @@
+env/
+*.npy
+*.h5
+CNN/data/
