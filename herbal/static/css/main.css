@@ -3,6 +3,7 @@
   --one: #264653;
   --two: #2a9d8f;
   --three: #206b62; /* An approximation of "darken($two, 20)" */
+  --color-black: hsl(0, 0%, 100%);
 
   /* Reset Styles */
   --font-family: Helvetica;
@@ -16,7 +17,19 @@
 }
 /* Reset Styles */
 body {
-  background-color: #111;
+  position: relative;
+  background-color: hsl(0, 0%, 100%);
+  /* background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      var(--color-black) 100%
+    ),
+    radial-gradient(
+      circle at 50% -50%,
+      #335F4B 0%,
+      var(--color-black) 100%
+    ); */
+  background-repeat: no-repeat;
   margin: 0;
   font-family: var(--font-family);
   font-size: var(--font-size);
@@ -39,6 +52,18 @@ nav {
   width: 100%;
   display: flex;
   justify-content: center;
+  position: fixed;
+  z-index: 100;
+}
+
+.footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
 }
 
 ul.navigation-menu {
