@@ -8,6 +8,7 @@
     <div class="col-lg-6 mx-auto">
         <div class="contentarea">
             <div class="Input">
+
                 <form method="POST" name="inputForm" enctype='multipart/form-data'>
                     {% csrf_token %}
                     <div id="camera" class="camera">
@@ -25,12 +26,11 @@
                     <button type="submit" class="button" id="submit">Submit</button>
                 </form>
             </div>
-           <img src="{{ path }}" alt="The screen capture will appear in this box.">
         </div>
 
-        <p>Prediction: {{ prediction }}</p>
+        <h3>Class: {{ prediction }}</h3>
         <div class="status">
-          <p id="message">{{ message }}</p>
+          <h3 id="message">{{ message }}</h3>
         </div>
 
       </div>
@@ -39,19 +39,33 @@
 </div>
 
 <script>
-(function() {
+  (function() {
+  // The width and height of the captured photo. We will set the
+  // width to the value defined here, but the height will be
+  // calculated based on the aspect ratio of the input stream.
+
   var width = 320;    // We will scale the photo width to this
   var height = 0;     // This will be computed based on the input stream
+
+  // |streaming| indicates whether or not we're currently streaming
+  // video from the camera. Obviously, we start at false.
+
   var streaming = false;
+
+  // The various HTML elements we need to configure or control. These
+  // will be set by the startup() function.
+
   var video = null;
   var canvas = null;
   var photo = null;
+  var formsrc = null;
   var startbutton = null;
 
   function startup() {
     video = document.getElementById('video');
     canvas = document.getElementById('canvas');
     photo = document.getElementById('photo');
+    formsrc = document.getElementById('webimg');
     startbutton = document.getElementById('startbutton');
 
     navigator.mediaDevices.getUserMedia({video: true, audio: false})
@@ -66,11 +80,14 @@
     video.addEventListener('canplay', function(ev){
       if (!streaming) {
         height = video.videoHeight / (video.videoWidth/width);
-      
+
+        // Firefox currently has a bug where the height can't be read from
+        // the video, so we will make assumptions if this happens.
+
         if (isNaN(height)) {
           height = width / (4/3);
         }
-      
+
         video.setAttribute('width', width);
         video.setAttribute('height', height);
         canvas.setAttribute('width', width);
@@ -83,9 +100,12 @@
       takepicture();
       ev.preventDefault();
     }, false);
-    
+
     clearphoto();
   }
+
+  // Fill the photo with an indication that none has been
+  // captured.
 
   function clearphoto() {
     var context = canvas.getContext('2d');
@@ -95,7 +115,7 @@
     var data = canvas.toDataURL('image/png');
     photo.setAttribute('src', data);
   }
-  
+
   // Capture a photo by fetching the current contents of the video
   // and drawing it into a canvas, then converting that to a PNG
   // format data URL. By drawing it on an offscreen canvas and then
@@ -108,15 +128,17 @@
       canvas.width = width;
       canvas.height = height;
       context.drawImage(video, 0, 0, width, height);
-    
+
       var data = canvas.toDataURL('image/png');
       photo.setAttribute('src', data);
+      formsrc.setAttribute('value', data);
     } else {
       clearphoto();
     }
   }
 
-
+  // Set up our event listener to run the startup process
+  // once loading is complete.
   window.addEventListener('load', startup, false);
 })();
 </script>
@@ -171,113 +193,3 @@
 }
 </style>
 {% endblock %}
-
-      <!-- <div class="wrapper">
-        <img
-          src="{% if image_url %}{{ image_url }}{% else %}{% static 'images/default.png' %}{% endif %}"
-          alt="Compressed Image"
-          width="400px"
-        />
-
-        <div class="info_container">
-          <ul>
-            <li>Name: <span class="name">{{ image.name }}</span></li>
-            <li>Prediction: <span class="type">{{ prediction }}</span></li>
-          </ul>
-        </div>
-      </div> -->
-      <!-- <form method="post" enctype="multipart/form-data"> 
-          {% csrf_token %}
-          <input type="checkbox" id="cameraToggle" onchange="toggleCamera()">
-          <label for="cameraToggle">Use Camera</label>
-          <br>
-          <video id="cameraFeed" autoplay playsinline style="display: none;"></video>
-          <canvas id="capturedImageCanvas" style="display: none;"></canvas>
-          <button id="captureButton" type="button" style="display: none;">Capture Image</button>
-          <input type="submit" value="Predict">
-          <input type="hidden" name="captured_image_data" id="capturedImageData">
-      </form>
-
-      <p>Prediction: {{ prediction }}</p> -->
-
-      <script>
-    // Get the video element, canvas, and form
-    // const video = document.querySelector('#cameraFeed');
-    // const canvas = document.querySelector('#capturedImageCanvas');
-    // const captureButton = document.querySelector('#captureButton');
-
-    // // Function to start the camera
-    // async function startCamera() {
-    //     try {
-    //         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    //         video.srcObject = stream;
-    //     } catch (error) {
-    //         console.error('Error accessing camera:', error);
-    //     }
-    // }
-
-    // // Function to stop the camera
-    // function stopCamera() {
-    //     const stream = video.srcObject;
-    //     const tracks = stream.getTracks();
-    //     tracks.forEach((track) => {
-    //         track.stop();
-    //     });
-    //     video.srcObject = null;
-    // }
-
-    // // Function to toggle camera feed and capture button
-    // function toggleCamera() {
-    //     if (document.querySelector('#cameraToggle').checked) {
-    //         // Turn on the camera
-    //         startCamera();
-    //         video.style.display = 'block';
-    //         captureButton.style.display = 'block';
-    //     } else {
-    //         // Turn off the camera
-    //         stopCamera();
-    //         video.style.display = 'none';
-    //         captureButton.style.display = 'none';
-    //     }
-    // }
-
-    // // Add a click event listener to the capture button
-    // captureButton.addEventListener('click', function() {
-    //     canvas.width = video.videoWidth;
-    //     canvas.height = video.videoHeight;
-    //     const ctx = canvas.getContext('2d');
-        
-    //     // Capture the image and flip it vertically
-    //     ctx.scale(1, -1);
-    //     ctx.drawImage(video, 0, -canvas.height, canvas.width, canvas.height);
-
-    //     // Convert the captured image to Data URL format
-    //     const imageDataURL = canvas.toDataURL('image/jpeg');  // You can change the format if needed
-        
-    //     // Set the captured image data as the value of the hidden input field
-    //     document.querySelector('#capturedImageData').value = imageDataURL;
-
-    //     // Submit the form to your Django view for prediction
-    //     document.querySelector('form').submit();
-    // });
-
-
-//   function captureImage() {
-//     canvas.width = video.videoWidth;
-//     canvas.height = video.videoHeight;
-//     const ctx = canvas.getContext('2d');
-    
-//     // Flip the image vertically
-//     ctx.scale(1, -1);
-//     ctx.drawImage(video, 0, -canvas.height, canvas.width, canvas.height);
-    
-//     // Flip the image back to its original orientation if needed
-//     ctx.scale(1, -1);
-
-//     const imageDataURL = canvas.toDataURL('image/jpeg');  // You can change the format if needed
-//     // Set the captured image data as the value of the hidden input field
-//     document.querySelector('#capturedImageData').value = imageDataURL;
-//     // Submit the form to your Django view for prediction
-//     form.submit();
-// }
-</script>

@@ -7,7 +7,7 @@ data=[]
 labels=[]
 
 # Get the herb directory
-none = os.listdir(os.getcwd() + "/CNN/data/bayabas")
+none = os.listdir(os.getcwd() + "/CNN/data/ADELFA")
 for x in none:
     """
     Loop through all the images in the directory
@@ -16,13 +16,13 @@ for x in none:
     3. Add image to dataset
     4. Add the label
     """
-    imag=cv2.imread(os.getcwd() + "/CNN/data/bayabas/" + x)
+    imag=cv2.imread(os.getcwd() + "/CNN/data/ADELFA/" + x)
     img_from_ar = Image.fromarray(imag, 'RGB')
     resized_image = img_from_ar.resize((224, 224))
     data.append(np.array(resized_image))
     labels.append(0)
 
-none = os.listdir(os.getcwd() + "/CNN/data/lagundi")
+none = os.listdir(os.getcwd() + "/CNN/data/ALOE VERA")
 for x in none:
     """
     Loop through all the images in the directory
@@ -31,7 +31,7 @@ for x in none:
     3. Add image to dataset
     4. Add the label
     """
-    imag=cv2.imread(os.getcwd() + "/CNN/data/lagundi/" + x)
+    imag=cv2.imread(os.getcwd() + "/CNN/data/ALOE VERA/" + x)
     img_from_ar = Image.fromarray(imag, 'RGB')
     resized_image = img_from_ar.resize((224, 224))
     data.append(np.array(resized_image))

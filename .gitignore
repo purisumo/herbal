@@ -1,3 +1,4 @@
 env/
 CNN/data/
 *.h5
+herbal/media
