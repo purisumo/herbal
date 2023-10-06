@@ -1,292 +1,493 @@
-{% include 'core/base.html' %}
+{% extends 'core/base.html' %}
 {% load static %}
 {% block content%}
-<br>
-<div style="max-width: auto; margin: auto; margin-top: 80px;">
-<div id="carouselExampleCaptions" class="carousel slide" style="box-shadow: 1px 1px 10px 3px rgba(0, 0, 0, 0.1);">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <!-- <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
-  </div>
-  <div class="carousel-inner">
-    <!-- <div class="carousel-item active">
-      <img src="/static/image/bsr-focus-nature-hero.jpg" class="d-block w-100" alt="..." style="max-height: 600px; object-fit: cover;">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>First slide label</h5>
-        <p>Some representative placeholder content for the first slide.</p>
-      </div>
-    </div>
-    <div class="carousel-item">
-      <img src="/static/image/Screenshot (652).png" class="d-block w-100" alt="..." style="max-height: 600px; object-fit: cover;">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Second slide label</h5>
-        <p>Some representative placeholder content for the second slide.</p>
-      </div>
-    </div> -->
-    <div class="carousel-item active">
-      <img src="/static/image/Screenshot (819).png" class="d-block w-100" alt="..." style="max-height: 600px; object-fit: cover;">
-      <div class="carousel-caption d-none d-md-block">
-        <h5>Third slide label</h5>
-        <p>Some representative placeholder content for the third slide.</p>
-      </div>
-    </div>
-  </div>
-  <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button> -->
-</div>
-</div>
-<div style=" display: flex; justify-content: center; color: rgb(220, 245, 230);">
-<div id=container>
-  <div>Discover </div>
-  <div id=flip>
-    <div><div>Cure</div></div>
-    <div><div>Effective</div></div>
-    <div><div>Natural</div></div>
-  </div>
-  <!-- <div>Herbal!</div> -->
-</div>
-</div>
-<br>
-<div id="flex1" >
+                <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
 
-<figure class="snip1401">
-  <img src="/static/image/13Malunggay1.jpg" alt="img" />
-  <figcaption>
-    <h3>Malunggay</h3>
-    <p>Hendrerit sollicitudin proin lacus montes dictumst eu blandit torquent vivamus rhoncus adipiscing consectetuer</p>
-  </figcaption>
-  <a href="#"></a>
-</figure>
-<figure class="snip1401"><img src="/static/image/1200px-Bawang.jpg" alt="img" />
-  <figcaption>
-    <h3>Bawang</h3>
-    <p>Hendrerit sollicitudin proin lacus montes dictumst eu blandit torquent vivamus rhoncus adipiscing consectetuer</p>
-  </figcaption>
-  <a href="#"></a>
-</figure>
-<figure class="snip1401"><img src="/static/image/fresh-ampalaya-ad-kg_1.jpg" alt="img" />
-  <figcaption>
-    <h3>Ampalaya</h3>
-    <p>Hendrerit sollicitudin proin lacus montes dictumst eu blandit torquent vivamus rhoncus adipiscing consectetuer</p>
-  </figcaption>
-  <a href="#"></a>
-</figure>
+                    <div class="container">
+                        <div class="row align-items-center">
 
-</div>
+                            <div class="col-lg-6 col-12 mx-auto">
+                                <em class="small-text">Welcome to CuraHerb</em>
+                                
+                                <h1>Cura Herb</h1>
 
+                                <p class="text-white mb-4 pb-lg-2">
+                                    your <em>herbal</em> assistant.
+                                </p>
+
+                                <a class="btn custom-btn custom-border-btn smoothscroll me-3" href="#section_2">
+                                   More
+                                </a>
+
+                                <a class="btn custom-btn smoothscroll me-2 mb-2" href="#section_3"><strong>Recommendations</strong></a>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="hero-slides"></div>
+                </section>
+
+
+                <section class="about-section section-padding" id="section_2">
+                    <div class="section-overlay"></div>
+                    <div class="container">
+                        <div class="row align-items-center">
+
+                            <div class="col-lg-6 col-12">
+                                <div class="ratio ratio-1x1">
+                                    <video autoplay="" loop="" muted="" class="custom-video" poster="">
+                                        <source src="/static/videos/pexels-mike-jones-9046237.mp4" type="video/mp4">
+
+                                        Your browser does not support the video tag.
+                                    </video>
+
+                                    <div class="about-video-info d-flex flex-column">
+                                        <h4 class="mt-auto">We Started Since 2009.</h4>
+
+                                        <h4>Best Cafe in Klang.</h4>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5 col-12 mt-4 mt-lg-0 mx-auto">
+                                <em class="text-white">Barista.co</em>
+
+                                <h2 class="text-white mb-3">Cafe KL</h2>
+
+                                <p class="text-white">The café had been in the town for as long as anyone could remember, and it had become a beloved institution among the locals.</p>
+
+                                <p class="text-white">The café was run by a friendly and hospitable couple, Mr. and Mrs. Johnson. Barista Cafe is free Bootstrap 5 HTML layout provided by <a rel="nofollow" href="https://www.tooplate.com" target="_blank">Tooplate</a>.</p>
+
+                                <a href="#barista-team" class="smoothscroll btn custom-btn custom-border-btn mt-3 mb-4">See More</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="barista-section section-padding section-bg" id="barista-team">
+                    <div class="container">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">Department of Health (DOH) Approved</em>
+
+                                <h2 class="text-white">Herbal Medicines</h2>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Akapulko</h4>
+
+                                            <p class="badge ms-4"><em>Cassia alata</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">this herbal medicine is used to treat ringworms and skin fungal infections.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/unnamed.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Ampalaya</h4>
+
+                                            <p class="badge ms-4"><em>Momordica charantia</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it most known as a treatment of diabetes (diabetes mellitus), for the non-insulin dependent patients.
+                                        </p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/team/cute-korean-barista-girl-pouring-coffee-prepare-filter-batch-brew-pour-working-cafe.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/team/small-business-owner-drinking-coffee.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bayabas</h4>
+
+                                            <p class="badge ms-4"><em>Psidium Guava</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">t is primarily used as an antiseptic, to disinfect wounds. Also, it can be used as a mouth wash to treat tooth decay and gum infection.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/team/smiley-business-woman-working-cashier.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="menu-section section-padding" id="section_3">
+                    <div class="container">
+                        <div class="row">
+
+                            <div class="col-lg-6 col-12 mb-4 mb-lg-0">
+                                <div class="menu-block-wrap">
+                                    <div class="text-center mb-4 pb-lg-2">
+                                        <em class="text-white">Delicious Menu</em>
+                                        <h4 class="text-white">Breakfast</h4>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Pancakes</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$12.50</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Fresh brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block my-4">
+                                        <div class="d-flex">
+                                            <h6>
+                                                Toasted Waffle
+                                            </h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="text-white ms-auto"><del>$16.50</del></strong>
+
+                                            <strong class="ms-2">$12.00</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Fried Chips
+                                                <span class="badge ms-3">Recommend</span>
+                                            </h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$15.0</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Rich Milk and Foam</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block my-4">
+                                        <div class="d-flex">
+                                            <h6>Pancakes</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$12.50</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Fresh brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Banana Cakes</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$18.0</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Rich Milk and Foam</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-12">
+                                <div class="menu-block-wrap">
+                                    <div class="text-center mb-4 pb-lg-2">
+                                        <em class="text-white">Favourite Menu</em>
+                                        <h4 class="text-white">Coffee</h4>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Latte</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="text-white ms-auto"><del>$12.50</del></strong>
+
+                                            <strong class="ms-2">$7.50</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Fresh brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block my-4">
+                                        <div class="d-flex">
+                                            <h6>
+                                                White Coffee
+                                                <span class="badge ms-3">Recommend</span>
+                                            </h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$5.90</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Chocolate Milk</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$5.50</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Rich Milk and Foam</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block my-4">
+                                        <div class="d-flex">
+                                            <h6>Greentea</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$7.50</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Fresh brewed coffee and steamed milk</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="menu-block">
+                                        <div class="d-flex">
+                                            <h6>Dark Chocolate</h6>
+                                        
+                                            <span class="underline"></span>
+
+                                            <strong class="ms-auto">$7.25</strong>
+                                        </div>
+
+                                        <div class="border-top mt-2 pt-2">
+                                            <small>Rich Milk and Foam</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="reviews-section section-padding section-bg" id="section_4">
+                    <div class="container">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">Reviews by Customers</em>
+
+                                <h2 class="text-white">Testimonials</h2>
+                            </div>
+
+                            <div class="timeline">
+                                <div class="timeline-container timeline-container-left">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="/static/image/reviews/young-woman-with-round-glasses-yellow-sweater.jpg" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Sandra</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-container timeline-container-right">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="/static/image/reviews/senior-man-white-sweater-eyeglasses.jpg" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Don</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="timeline-container timeline-container-left">
+                                    <div class="timeline-content">
+                                        <div class="reviews-block">
+                                            <div class="reviews-block-image-wrap d-flex align-items-center">
+                                                <img src="/static/image/reviews/young-beautiful-woman-pink-warm-sweater-natural-look-smiling-portrait-isolated-long-hair.jpg" class="reviews-block-image img-fluid" alt="">
+
+                                                <div class="">
+                                                    <h6 class="text-white mb-0">Olivia</h6>
+                                                    <em class="text-white"> Customers</em>
+                                                </div>
+                                            </div>
+
+                                            <div class="reviews-block-info">
+                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+
+                                                <div class="d-flex border-top pt-3 mt-4">
+                                                    <strong class="text-white">4.5 <small class="ms-2">Rating</small></strong>
+
+                                                    <div class="reviews-group ms-auto">
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star-fill"></i>
+                                                        <i class="bi-star"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section class="contact-section section-padding" id="section_5">
+                    <div class="container">
+                        <div class="row">   
+
+                            <div class="col-lg-12 col-12">
+                                <em class="text-white">Say Hello</em>
+                                <h2 class="text-white mb-4 pb-lg-2">Contact</h2>
+                            </div>
+
+                            <div class="col-lg-6 col-12">
+                                <form action="#" method="post" class="custom-form contact-form" role="form">
+
+                                <div class="row">
+                                    
+                                    <div class="col-lg-6 col-12">
+                                        <label for="name" class="form-label">Name <sup class="text-danger">*</sup></label>
+
+                                        <input type="text" name="name" id="name" class="form-control" placeholder="Jackson" required="">
+                                    </div>
+
+                                    <div class="col-lg-6 col-12">
+                                        <label for="email" class="form-label">Email Address</label>
+
+                                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Jack@gmail.com" required="">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label for="message" class="form-label">How can we help?</label>
+
+                                        <textarea name="message" rows="4" class="form-control" id="message" placeholder="Message" required=""></textarea>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-5 col-12 mx-auto mt-3">
+                                    <button type="submit" class="form-control">Send Message</button>
+                                </div>
+                            </form>
+                            </div>
+
+                            <div class="col-lg-6 col-12 mx-auto mt-5 mt-lg-0 ps-lg-5">
+                                <iframe class="google-map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5039.668141741662!2d72.81814769288509!3d19.043340656729775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c994f34a7355%3A0x2680d63a6f7e33c2!2sLover%20Point!5e1!3m2!1sen!2sth!4v1692722771770!5m2!1sen!2sth" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>  
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
 {% endblock %}
-<style>
-@import url('https://fonts.googleapis.com/css?family=Roboto:700');
-#container {
-  color:#999;
-  text-transform: uppercase;
-  font-size:36px;
-  font-weight:bold;
-  padding-top:50px;  
-  position:relative;
-  margin: auto;
-  bottom:45%;
-  display:block;
-}
-
-#flip {
-  height:50px;
-  overflow:hidden;
-}
-
-#flip > div > div {
-  color:#fff;
-  padding:4px 12px;
-  height:45px;
-  margin-bottom:45px;
-  display:inline-block;
-}
-
-#flip div:first-child {
-  animation: show 5s linear infinite;
-}
-
-#flip div div {
-  background:#42c58a;
-}
-#flip div:first-child div {
-  background:#4ec7f3;
-}
-#flip div:last-child div {
-  background:#DC143C;
-}
-
-@keyframes show {
-  0% {margin-top:-270px;}
-  5% {margin-top:-180px;}
-  33% {margin-top:-180px;}
-  38% {margin-top:-90px;}
-  66% {margin-top:-90px;}
-  71% {margin-top:0px;}
-  99.99% {margin-top:0px;}
-  100% {margin-top:-270px;}
-}
-
-p{
-  position:absolute;
-  width:100%;
-  bottom:30px;
-  font-size:12px;
-  color:#959595;
-  margin-top:200px;
-}
-
-
-@import url(https://fonts.googleapis.com/css?family=Playfair+Display:400,800);
-@import url(https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css);
-#flex1{
-    display: flex;
-    justify-content:center;
-    margin: auto;
-    margin-bottom: 100px;
-}
-@media screen and (max-width:768px) {
-    #flex1{
-        display: grid;
-        justify-content: center;
-        margin: auto;
-    }
-}
-.snip1401 {
-  font-family: 'Playfair Display', Arial, sans-serif;
-  position: relative;
-  overflow: hidden;
-  margin: 10px;
-  min-width: 200px;
-  max-width: 415px;
-  max-height: 320px;
-  width: 100%;
-  color: #000000;
-  text-align: right;
-  font-size: 16px;
-  background-color: #000000;
-  box-shadow: 1px 1px 10px 3px rgba(0, 0, 0, 0.1)
-}
-.snip1401 * {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-transition: all 0.35s ease;
-  transition: all 0.35s ease;
-}
-.snip1401 img {
-  max-width: 100%;
-  backface-visibility: hidden;
-}
-.snip1401 figcaption {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-  opacity: 1;
-  padding: 30px 0 30px 10px;
-  background-color: #ffffff;
-  width: 40%;
-  -webkit-transform: translateX(150%);
-  transform: translateX(150%);
-}
-.snip1401 figcaption:before {
-  position: absolute;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  right: 100%;
-  content: '';
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 120px 120px 120px 0;
-  border-color: transparent #ffffff transparent transparent;
-}
-.snip1401:after {
-  position: absolute;
-  bottom: 50%;
-  right: 40%;
-  content: '';
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 120px 120px 0 120px;
-  border-color: rgba(255, 255, 255, 0.5) transparent transparent transparent;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  -webkit-transition: all 0.35s ease;
-  transition: all 0.35s ease;
-}
-.snip1401 h3,
-.snip1401 p {
-  line-height: 1.5em;
-  -webkit-transform: translateX(-30px);
-  transform: translateX(-30px);
-  margin: 0;
-}
-.snip1401 h3 {
-  margin: 0 0 5px;
-  line-height: 1.1em;
-  font-weight: 900;
-  font-size: 1.4em;
-  opacity: 0.75;
-}
-.snip1401 p {
-  font-size: 0.8em;
-}
-.snip1401 i {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 20px 30px;
-  font-size: 44px;
-  color: #ffffff;
-  opacity: 0;
-}
-.snip1401 a {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-}
-.snip1401:hover img,
-.snip1401.hover img {
-  zoom: 1;
-  filter: alpha(opacity=50);
-  -webkit-opacity: 0.5;
-  opacity: 0.5;
-}
-.snip1401:hover:after,
-.snip1401.hover:after,
-.snip1401:hover figcaption,
-.snip1401.hover figcaption,
-.snip1401:hover i,
-.snip1401.hover i {
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-  opacity: 1;
-}
-.h1{
-    font-family: var(--font-family);
-}
-</style>
-
-<script>
-    /* Demo purposes only */
-$(".hover").mouseleave(
-  function () {
-    $(this).removeClass("hover");
-  }
-);
-
-</script>

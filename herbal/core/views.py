@@ -16,6 +16,7 @@ from django.conf import settings
 from django.template.response import TemplateResponse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView, UpdateView
@@ -24,15 +25,13 @@ from django.urls import reverse_lazy, reverse
 
 from .forms import HerbForm
 from .models import Herb, Favorite
-import time
-import tempfile
-import requests
 
-from django.core.files import File
-from django.core.files.base import ContentFile
-from django.core.files.temp import NamedTemporaryFile
-from urllib.request import urlopen
-# Create your views here.
+# ------------------------------------------------------------------------v
+
+class CustomFileSystemStorage(FileSystemStorage):
+    def get_available_name(self, name, max_length=None):
+        self.delete(name)
+        return name
 
 def home(request):
     
@@ -42,14 +41,20 @@ def herbs(request):
 
     return render(request, 'herbs.html')
 
-def illness(request):
+def image_search(request):
 
-    return render(request, 'illness.html')
+    return render(request, 'image-search.html')
 
+def herbal_map(request):
+
+    return render(request, 'herbal-map.html')
+
+@login_required(login_url='login')
 def favourite(request):
 
     return render(request, 'favourite.html')
 
+@login_required
 def toggle_favorite(request, herb_id):
     herb = get_object_or_404(Herb, pk=herb_id)
     user = request.user
@@ -103,11 +108,6 @@ def search(request):
 
     return render(request, 'core/search.html', {'herbs': herbs})
 
-
-class CustomFileSystemStorage(FileSystemStorage):
-    def get_available_name(self, name, max_length=None):
-        self.delete(name)
-        return name
 
 def recognition(request):
     message = ""

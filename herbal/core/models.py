@@ -5,8 +5,10 @@ from registration.models import User
 
 class Herb(models.Model):
     name = models.CharField(max_length=255, blank=False, null=True)
-    property = models.TextField( blank=True, null=True)
-    use = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    med_property = models.TextField(blank=True, null=True)
+    med_use = models.TextField(blank=True, null=True)
+    potential_SE = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='Herbs/', blank=True)
 
     def __str__(self):

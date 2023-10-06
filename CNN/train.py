@@ -28,16 +28,30 @@ test_length=len(x_test)
 # 
 (y_train,y_test)=labels[(int)(0.1*data_length):],labels[:(int)(0.1*data_length)]
 
+# Define the EarlyStopping callback
+early_stopping = keras.callbacks.EarlyStopping(
+    monitor='val_accuracy',
+    min_delta=0.001,  # Reduce the minimum delta for early stopping
+    patience=15,      # Increase patience to give more time for improvement
+    verbose=1,
+    restore_best_weights=True,
+)
 
+# Add ModelCheckpoint callback for saving the best model
+model_checkpoint = keras.callbacks.ModelCheckpoint(
+    filepath="best_model.h5",
+    monitor="val_accuracy",
+    save_best_only=True,
+    verbose=1,
+)
 # CNN https://www.tensorflow.org/tutorials/images/cnn
 
 model = models.Sequential()
-model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(224, 224, 3)))
-model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(16, (3, 3), activation='relu', input_shape=(50, 50, 3)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
-model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
 model.summary()
 
 model.add(layers.Flatten())
@@ -51,7 +65,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 history = model.fit(x_train, y_train, epochs=100, 
-                    validation_data=(x_test, y_test))
+                    validation_data=(x_test, y_test), callbacks=[early_stopping, model_checkpoint])
 
 plt.plot(history.history['accuracy'], label='accuracy')
 plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
@@ -63,4 +77,5 @@ plt.legend(loc='lower right')
 test_loss, test_acc = model.evaluate(x_test,  y_test, verbose=2)
 
 print(test_acc)
+
 model.save("model.h5")

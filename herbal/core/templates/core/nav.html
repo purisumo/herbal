@@ -1,58 +1,81 @@
-{% load static %}
-<header>
-  <nav>
-    <ul class="navigation-menu">
-      <li>
-        <a href="{% url 'home' %}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-            <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z"/>
-            </svg>
-        </a>
-        <ul>
-        {% if user.is_authenticated %}
-          <li><a href="{% url 'logout' %}">logout</a>
-          </li>
-        {% else %}
-          <li><a href="{% url 'login' %}">Sign in</a>
-          </li>
-        {% endif %}
-        </ul>
-        </li>
-      <li><a >Discover</a>
-        <ul>
-          <li><a href="{% url 'herbs' %}">Herbs</a>
-          </li>
-          <li><a href="{% url 'illness' %}">Illness</a>
-          </li>
-        </ul>
-      </li>
-      <li><a>Tools</a>
-        <ul>
-          <li><a href="{% url 'recognition' %}">Scan</a>
-          </li>
-          <li><a href="{% url 'favourite' %}">Favourite</a>
-          </li>
-        </ul>
-      </li>
-      <!-- <li><a href="#">Locations &amp; Hours</a>
-        <ul>
-          <li><a href="#">North America</a></li>
-          <li><a href="#">Europe</a></li>
-        </ul>
-      </li> -->
-      <li><a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-        </svg>
-      </a>
-        <ul>
-          <li>
-            <form method="get" action="{% url 'search' %}">
-            <input name="query" type="text"  placeholder="Search" class="form-control">
-          </form>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </nav>
-</header>
+{% load static%}
+<nav class="navbar navbar-expand-lg">                
+                    <div class="container">
+                        <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                            <img src="/static/image/ch logo.png" class="navbar-brand-image img-fluid" alt="Barista Cafe Template">
+                            CuraHerb
+                        </a>
+        
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+        
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-lg-auto">
+                                <li class="nav-item">
+                                    <div id="wrap">
+                                    <form action="" autocomplete="off">
+                                    <input id="search" name="search" type="text" placeholder="Find Your Herb"><input id="search_submit" value="Rechercher" type="submit">
+                                    </form>
+                                    </div>
+                                </li>
+        
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'herbs' %}">Herbal Plants</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'image-search' %}">Image Search</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{% url 'herbal-map' %}">Herbal Map</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <!-- <form action="" class="search-bar">
+                                        <input type="search" name="search" pattern=".*\S.*" required>
+                                        <button class="search-btn" type="submit">
+                                            <span>Search</span>
+                                        </button>
+                                    </form> -->
+                                    <!-- <a class="nav-link " href="{% url 'login_or_register' %}">Log In</a> -->
+                                </li>
+                            </ul>
+
+
+                            <div class="ms-lg-3">
+                            
+                                <!-- <form action="" class="search-bar">
+                                    <input type="search" name="search" pattern=".*\S.*" required>
+                                    <button class="search-btn" type="submit">
+                                        <span>Search</span>
+                                    </button>
+                                </form> -->
+                                <!-- <a class="btn custom-btn custom-border-btn" href="{% url 'login_or_register' %}">
+                                    Login
+                                    <i class="bi-arrow-up-right ms-2"></i>
+                                </a> -->
+                            </div>
+                            <div class="container2">
+                            <!-- Btn-->
+                            <button class="btn2"><span>Account</span>
+                                <ul class="dropdown">
+                                <li class="active"><a href="{% url 'favourite' %}">Favourites</a></li>
+                                <li><a href="{% url 'change_password' %}">Change Password</a></li>
+                                <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
+                                {% if user.is_authenticated %}
+                                <li><a href="{% url 'logout' %}">Log Out</a></li>
+                                {% else %}
+                                <li><a href="{% url 'login_or_register' %}">Log In</a></li>
+                                {% endif %}
+                                </ul>
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+
+
+

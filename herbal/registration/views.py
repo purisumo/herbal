@@ -12,55 +12,99 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import authenticate, login, logout
 
-def login_view(request):
-
+def login_or_register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        action = request.POST.get('action')
 
-        user = authenticate(username=username, password=password)
+        if action == 'login':
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(username=username, password=password)
 
-        if user is not None and user.is_superuser:
-            login(request, user)
-            return redirect('dashboard')
-        elif user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.info(request, 'Invalid Credentials!')
-            return redirect('login')
-    else:
-        
-        return render(request, 'registration/login.html')
+            if user is not None:
+                login(request, user)
+                if user.is_superuser:
+                    return redirect('home')
+                else:
+                    return redirect('home')
+            else:
+                messages.info(request, 'Invalid Credentials!')
+                return redirect('login_or_register')
+        elif action == 'register':
+            username = request.POST['username']
+            email = request.POST['email']
+            password = request.POST['password']
+            password2 = request.POST['password2']
+
+            if password == password2:
+                if User.objects.filter(email=email).exists():
+                    messages.info(request, 'Email already used')
+                    return redirect('login_or_register')
+                elif User.objects.filter(username=username).exists():
+                    messages.info(request, 'Username already used')
+                    return redirect('login_or_register')
+                else:
+                    user = User.objects.create_user(username=username, email=email, password=password)
+                    user.save()
+                    login(request, user)
+                    return redirect('home')
+            else:
+                messages.info(request, 'Passwords do not match')
+                return redirect('login_or_register')
+
+    return render(request, 'registration/login_or_register.html')
+
 
 def logout_view(request):
     logout(request)
     return redirect('home')
 
-def register(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        password2 = request.POST['password2']
+# def login_view(request):
 
-        if password == password2:
-            if User.objects.filter(email=email).exists():
-                messages.info(request, 'Email already used')
-                return redirect('register')
-            elif User.objects.filter(username=username).exists():
-                messages.info(request, 'Username already used')
-                return redirect('register')
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
 
-            else:
-                user = User.objects.create_user(username=username, email=email, password=password)  
-                user.save(); 
-                return redirect('login')
-        else:
-            messages.info(request, 'Password is not the same')
-            return redirect('register')
-    else:
-        return render(request, 'registration/register.html')
+#         user = authenticate(username=username, password=password)
+
+#         if user is not None and user.is_superuser:
+#             login(request, user)
+#             return redirect('dashboard')
+#         elif user is not None:
+#             login(request, user)
+#             return redirect('home')
+#         else:
+#             messages.info(request, 'Invalid Credentials!')
+#             return redirect('login')
+#     else:
+        
+#         return render(request, 'registration/login.html')
+
+
+# def register(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         email = request.POST['email']
+#         password = request.POST['password']
+#         password2 = request.POST['password2']
+
+#         if password == password2:
+#             if User.objects.filter(email=email).exists():
+#                 messages.info(request, 'Email already used')
+#                 return redirect('register')
+#             elif User.objects.filter(username=username).exists():
+#                 messages.info(request, 'Username already used')
+#                 return redirect('register')
+
+#             else:
+#                 user = User.objects.create_user(username=username, email=email, password=password)  
+#                 user.save(); 
+#                 return redirect('login')
+#         else:
+#             messages.info(request, 'Password is not the same')
+#             return redirect('register')
+#     else:
+#         return render(request, 'registration/register.html')
 
 @login_required
 def change_password(request):

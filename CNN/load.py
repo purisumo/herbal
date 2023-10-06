@@ -5,7 +5,6 @@ import numpy as np
 # temporal storage for labels and images
 data=[]
 labels=[]
-
 # Get the herb directory
 none = os.listdir(os.getcwd() + "/CNN/data/ADELFA")
 for x in none:
@@ -18,9 +17,24 @@ for x in none:
     """
     imag=cv2.imread(os.getcwd() + "/CNN/data/ADELFA/" + x)
     img_from_ar = Image.fromarray(imag, 'RGB')
-    resized_image = img_from_ar.resize((224, 224))
+    resized_image = img_from_ar.resize((50, 50))
     data.append(np.array(resized_image))
     labels.append(0)
+
+none = os.listdir(os.getcwd() + "/CNN/data/akapulko")
+for x in none:
+    """
+    Loop through all the images in the directory
+    1. Convert to arrays
+    2. Resize the images
+    3. Add image to dataset
+    4. Add the label
+    """
+    imag=cv2.imread(os.getcwd() + "/CNN/data/akapulko/" + x)
+    img_from_ar = Image.fromarray(imag, 'RGB')
+    resized_image = img_from_ar.resize((50, 50))
+    data.append(np.array(resized_image))
+    labels.append(1)
 
 none = os.listdir(os.getcwd() + "/CNN/data/ALOE VERA")
 for x in none:
@@ -33,25 +47,9 @@ for x in none:
     """
     imag=cv2.imread(os.getcwd() + "/CNN/data/ALOE VERA/" + x)
     img_from_ar = Image.fromarray(imag, 'RGB')
-    resized_image = img_from_ar.resize((224, 224))
-    data.append(np.array(resized_image))
-    labels.append(1)
-
-none = os.listdir(os.getcwd() + "/CNN/data/sambong")
-for x in none:
-    """
-    Loop through all the images in the directory
-    1. Convert to arrays
-    2. Resize the images
-    3. Add image to dataset
-    4. Add the label
-    """
-    imag=cv2.imread(os.getcwd() + "/CNN/data/sambong/" + x)
-    img_from_ar = Image.fromarray(imag, 'RGB')
-    resized_image = img_from_ar.resize((224, 224))
+    resized_image = img_from_ar.resize((50, 50))
     data.append(np.array(resized_image))
     labels.append(2)
-
 
 # load in herbs and labels
 herbs=np.array(data)
@@ -59,6 +57,11 @@ labels=np.array(labels)
 # save
 np.save("herbs",herbs)
 np.save("labels",labels)
+
+
+
+
+# ------------------------------------------------------------------------------------------------>
 
 # import os
 # import cv2
@@ -98,7 +101,7 @@ np.save("labels",labels)
 
 #             # Convert to a PIL Image and resize
 #             img_from_ar = Image.fromarray(imag, 'RGB')
-#             resized_image = img_from_ar.resize((50, 50))
+#             resized_image = img_from_ar.resize((224, 224))
 
 #             # Append the resized image to the data list
 #             data.append(np.array(resized_image))

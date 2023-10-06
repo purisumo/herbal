@@ -2,3 +2,5 @@ env/
 CNN/data/
 *.h5
 herbal/media
+CNN/excl
+*.npy
