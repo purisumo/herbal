@@ -14,7 +14,7 @@
                             <ul class="navbar-nav ms-lg-auto">
                                 <li class="nav-item">
                                     <div id="wrap">
-                                    <form action="" autocomplete="off">
+                                    <form action="{% url 'search' %}" autocomplete="off">
                                     <input id="search" name="search" type="text" placeholder="Find Your Herb"><input id="search_submit" value="Rechercher" type="submit">
                                     </form>
                                     </div>
@@ -62,9 +62,9 @@
                             <button class="btn2"><span>Account</span>
                                 <ul class="dropdown">
                                 <li class="active"><a href="{% url 'favourite' %}">Favourites</a></li>
+                                {% if user.is_authenticated %}
                                 <li><a href="{% url 'change_password' %}">Change Password</a></li>
                                 <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
-                                {% if user.is_authenticated %}
                                 <li><a href="{% url 'logout' %}">Log Out</a></li>
                                 {% else %}
                                 <li><a href="{% url 'login_or_register' %}">Log In</a></li>

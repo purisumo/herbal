@@ -3,13 +3,16 @@ import cv2
 
 from PIL import Image
 import numpy as np
+import pandas as pd
+import folium
 import tensorflow as tf
 from django.core.files.uploadedfile import InMemoryUploadedFile
 import base64
 import io
 from io import BytesIO
+import math
 
-from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError, Http404
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.db.models import Q
 from django.conf import settings
@@ -24,7 +27,7 @@ from django.core.files.storage import default_storage
 from django.urls import reverse_lazy, reverse
 
 from .forms import HerbForm
-from .models import Herb, Favorite
+from .models import Herb, Store, Favorite
 
 # ------------------------------------------------------------------------v
 
@@ -49,7 +52,7 @@ def herbal_map(request):
 
     return render(request, 'herbal-map.html')
 
-@login_required(login_url='login')
+@login_required(login_url='login_or_register')
 def favourite(request):
 
     return render(request, 'favourite.html')
@@ -66,7 +69,7 @@ def toggle_favorite(request, herb_id):
         # Herb is not a favorite, add it
         Favorite.objects.create(user=user, herb=herb)
 
-    return redirect('herb_detail', herb_id=herb_id)
+    return redirect('herbs', herb_id=herb_id)
 
 @staff_member_required
 def add(request):
@@ -104,9 +107,12 @@ class edit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 def search(request):
     query = request.GET.get('query', '')
 
-    herbs = Herb.objects.filter(Q(name__icontains=query) | Q(use__icontains=query) | Q(property__icontains=query))
+    herbs = Herb.objects.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(med_use__icontains=query) | Q(med_property__icontains=query) | Q(potential_SE__icontains=query))
 
-    return render(request, 'core/search.html', {'herbs': herbs})
+    if not herbs:
+        raise Http404("No matching herbs found")
+
+    return render(request, 'herbs.html', {'herbs': herbs})
 
 
 def recognition(request):
@@ -191,9 +197,16 @@ def cam_recognition(request):
                 # Add more classes here if needed
             }
 
-            # Get the predicted class name
-            predicted_class_index = np.argmax(result)
-            predicted_class_name = class_mapping.get(predicted_class_index, "Unknown")
+            # Set a threshold for class probability
+            threshold = 0.89  # Adjust this threshold as needed
+
+            # Check if any class probability exceeds the threshold
+            if np.max(result) >= threshold:
+                # Get the predicted class name
+                predicted_class_index = np.argmax(result)
+                predicted_class_name = class_mapping.get(predicted_class_index, "Unknown")
+            else:
+                predicted_class_name = "Unknown"
 
             return render(request, "cam-recognition.html", {"prediction": predicted_class_name})
 
@@ -202,3 +215,48 @@ def cam_recognition(request):
             return HttpResponseServerError(f"Error: {str(e)}")
 
     return render(request, 'cam-recognition.html')
+
+
+def map_endpoint(request):
+    herbs = Herb.objects.all()
+    stores = Store.objects.all()
+
+    # Create a map
+    m = folium.Map(location=[6.918658, 122.077802], zoom_start=13, control_scale=True, max_zoom=20, min_zoom=2, max_bounds=True)
+
+    # Iterate over store objects and create markers
+    for store in stores:
+        lat = store.lat
+        long = store.long
+
+        if lat is not None and long is not None:
+            popup = folium.Popup(store.name)
+            folium.Marker(
+                location=[lat, long],
+                popup=popup,
+            ).add_to(m)
+
+    # Iterate over herb objects and create markers
+    for herb in herbs:
+        lat = herb.lat
+        long = herb.long
+
+
+        if lat is not None and long is not None:
+
+            popup = folium.Popup(herb.name)
+
+            folium.CircleMarker(
+                location=[lat, long],
+                radius=20,
+                color='green',
+                fill=True,
+                fill_color='green',
+                fill_opacity=0.6,
+                popup=popup,
+            ).add_to(m)
+
+    # Get the map HTML
+    map_html = m._repr_html_()
+
+    return HttpResponse(map_html)

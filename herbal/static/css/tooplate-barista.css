@@ -10,16 +10,17 @@ https://www.tooplate.com/view/2137-barista-cafe
   CUSTOM PROPERTIES ( VARIABLES )             
 -----------------------------------------*/
 :root {
-  --white-color:                  #ffffff;
-  --primary-color:                #BC6C25;
-  --secondary-color:              #DDA15E;
-  --section-bg-color:             #b78752;
-  --custom-btn-bg-color:          #BC6C25;
+  --white-color:                  #f2f2f2;
+  --primary-color:                #3b945e;
+  --secondary-color:              #57ba98;
+  --section-bg-color:             #57ba98;
+  --section-bg-color2:            #65ccb8;
+  --custom-btn-bg-color:          #558d14;
   --custom-btn-bg-hover-color:    #DDA15E;
-  --dark-color:                   #000000;
+  --dark-color:                   #042807;
   --p-color:                      #717275;
   --border-color:                 #7fffd4;
-  --link-hover-color:             #E76F51;
+  --link-hover-color:             #a1ae7d;
 
   --body-font-family:             'Plus Jakarta Sans', sans-serif;
 
@@ -559,7 +560,7 @@ strong {
 }
 
 .small-text {
-  color: var(--secondary-color);
+  color: var(--white-color);
 }
 
 .hero-section .custom-border-btn {
@@ -623,7 +624,7 @@ strong {
 }
 
 .about-video-info {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(188, 108, 37, 1));
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(	24, 38, 40, 1));
   border-radius: var(--border-radius-medium);
   bottom: 0;
   height: auto;
@@ -644,6 +645,7 @@ strong {
   position: relative;
   overflow: hidden;
   max-height: 450px;
+  height: 380px;
   cursor: pointer;
 }
 
@@ -664,7 +666,7 @@ strong {
 }
 
 .team-block-info {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(188, 108, 37, 1));
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(	24, 38, 40, 1));
   position: absolute;
   z-index: 2;
   top: 0;
@@ -685,7 +687,8 @@ strong {
   OUR MENU              
 -----------------------------------------*/
 .menu-section {
-  background-image: url('../image/happy-waitress-giving-coffee-customers-while-serving-them-coffee-shop.jpg');
+  background-color: var(--section-bg-color);
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(59, 148, 94, 1)), url();
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -746,11 +749,11 @@ strong {
   REVIEWS              
 -----------------------------------------*/
 .reviews-section {
-  background-color: #7c5c52;
+  background-color: #57ba98;
 }
 
 .reviews-block {
-  background-color: var(--section-bg-color);
+  background-color: var(--section-bg-color2);
   border-radius: var(--border-radius-medium);
   position: relative;
   overflow: hidden;
@@ -761,7 +764,7 @@ strong {
 }
 
 .reviews-block-image-wrap {
-  background-image: url('../image/mid-section-waitress-wiping-espresso-machine-with-napkin-cafa-c.jpg');
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(24, 38, 40, 1)), url('../image/lisa-hobbs-mRaNok_Ld6s-unsplash.jpg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -844,7 +847,8 @@ strong {
   CONTACT               
 -----------------------------------------*/
 .contact-section {
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(188, 108, 37, 1)), url('../image/young-female-barista-wear-face-mask-serving-take-away-hot-coffee-paper-cup-consumer-cafe.jpg');
+  background-color: var(--section-bg-color);
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(	59, 148, 94, 1)), url('');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;

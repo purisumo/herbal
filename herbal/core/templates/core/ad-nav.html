@@ -10,27 +10,27 @@
         </a>
         <ul>
         {% if user.is_authenticated %}
-          <li><a href="{% url 'logout' %}">logout</a>
+          <li><a href="">logout</a>
           </li>
         {% else %}
-          <li><a href="{% url 'login' %}">Sign in</a>
+          <li><a href="">Sign in</a>
           </li>
         {% endif %}
         </ul>
         </li>
       <li><a >Discover</a>
         <ul>
-          <li><a href="{% url 'herbs' %}">Herbs</a>
+          <li><a href="">Herbs</a>
           </li>
-          <li><a href="{% url 'illness' %}">Illness</a>
+          <li><a href="">Illness</a>
           </li>
         </ul>
       </li>
       <li><a>Tools</a>
         <ul>
-          <li><a href="{% url 'recognition' %}">Scan</a>
+          <li><a href="">Scan</a>
           </li>
-          <li><a href="{% url 'favourite' %}">Favourite</a>
+          <li><a href="">Favourite</a>
           </li>
         </ul>
       </li>

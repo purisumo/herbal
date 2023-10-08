@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+
+<section class="menu-section section-padding" id="section_3" style="padding-top: 100px; padding-bottom: 100px;">
+  <div class="container" data-aos="fade-up">
+    <div class="section-header d-flex justify-content-between align-items-center mb-5">
+    </div>
+    <div class="text-center mt-md-5"><h1 id="link">Herb Map</h1></div>
+    <div class="justify-content-center" id="map-placeholder" style="max-width: 1000px; margin: auto;">
+    <div class="d-flex justify-content-center"> Loading Map </div>
+    <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>
+          {% if map %}
+          {% endif %}
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+  var mapLoaded = false;
+
+  window.addEventListener("scroll", function () {
+    var mapPlaceholder = document.getElementById("map-placeholder");
+    var rect = mapPlaceholder.getBoundingClientRect();
+    var scrollPosition = window.innerHeight;
+
+    if (rect.top <= scrollPosition && !mapLoaded) {
+      // Show the loading icon
+      mapPlaceholder.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/map/", true);  // Update the URL to match your Django endpoint URL
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var mapHtml = xhr.responseText;
+          mapPlaceholder.innerHTML = mapHtml;
+          mapLoaded = true;
+        }
+      };
+      xhr.send();
+
+      window.removeEventListener("scroll", arguments.callee);
+    }
+  });
+
+
+
+</script>
+
+{% endblock %}

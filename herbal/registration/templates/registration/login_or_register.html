@@ -50,7 +50,7 @@
 			<button class="submit-btn" type="submit" >Log in</button>
       <br><br>
       <div class="wrap">
-        <button class="button"><a href="{% url 'home' %}">Back to Site</a></button>
+        <a class="button" href="{% url 'home' %}"> <div style="margin: auto; padding-top: 15px;">Back to Site</div></a>
       </div>
 		</div>
     
@@ -73,6 +73,8 @@
 }
 
 .button {
+  text-decoration: none;
+  text-align: center;
   width: 140px;
   height: 45px;
   font-family: 'Roboto', sans-serif;

@@ -1,43 +1,45 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content %}
-<br>
-<div style="max-width: auto; margin: auto; margin-top: 80px;">
-<div class="px-4 py-5 my-5 text-center">
-    <h1 class="display-5 fw-bold">Centered hero</h1>
-    <div class="col-lg-6 mx-auto">
-        <div class="contentarea">
-            <div class="Input">
+<div class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
+    <div style="max-width: auto; margin: auto; margin-top: 80px;">
+    <div class="px-4 py-5 my-5 text-center">
+        <h1 class="display-5 fw-bold">Scan</h1>
+        <div class="col-lg-6 mx-auto">
+            <div class="contentarea">
+                <div class="Input">
 
-                <form method="POST" name="inputForm" enctype='multipart/form-data'>
-                    {% csrf_token %}
-                    <div id="camera" class="camera">
-                        <video id="video">Video stream not available.</video>
-                        <button id="startbutton" type="button">Take photo</button>
-                        <input id="webimg" value="" name="src" type="text" style="display: none;">
-                        <canvas id="canvas">
-                        </canvas>
-                    </div>
-                    <br>
-                    <div>
-                        <img id="photo" alt="your image">
-                    </div>
-                    <br>
-                    <button type="submit" class="button" id="submit">Submit</button>
-                </form>
+                    <form method="POST" name="inputForm" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <div id="camera" class="camera">
+                            <video id="video">Video stream not available.</video>
+                            <button id="startbutton" type="button">Take photo</button>
+                            <input id="webimg" value="" name="src" type="text" style="display: none;">
+                            <canvas id="canvas">
+                            </canvas>
+                        </div>
+                        <br>
+                        <div>
+                            <img id="photo" alt="your image">
+                        </div>
+                        <br>
+                        <button type="submit" class="button" id="submit">Submit</button>
+                    </form>
+                </div>
             </div>
-        </div>
 
-        <h3>Class: {{ prediction }}</h3>
-        <div class="status">
-          <h3 id="message">{{ message }}</h3>
-        </div>
+            <h3>Class: {{ prediction }}</h3>
+            <p>Confidence: {{ confidence }}</p>
+            <div class="status">
+              <h3 id="message">{{ message }}</h3>
+            </div>
 
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
+</section>
+                
 <script>
   (function() {
   // The width and height of the captured photo. We will set the
@@ -189,7 +191,6 @@
 .contentarea {
   font-size: 16px;
   font-family: "Lucida Grande", "Arial", sans-serif;
-  width: 760px;
 }
 </style>
 {% endblock %}

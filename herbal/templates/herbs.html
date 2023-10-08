@@ -1,15 +1,301 @@
-{% extends 'core/base.html' %}
+<!doctype html>
 {% load static %}
-{% block content %}
-<div class="px-4 py-5 my-5 text-center">
-    <img class="d-block mx-auto mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
-    <h1 class="display-5 fw-bold">Centered hero</h1>
-    <div class="col-lg-6 mx-auto">
-      <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <button type="button" class="btn btn-primary btn-lg px-4 gap-3">Primary button</button>
-        <button type="button" class="btn btn-outline-secondary btn-lg px-4">Secondary</button>
-      </div>
-    </div>
-  </div>
-{% endblock %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>CuraHerb Website</title>
+
+        <link href="/static/image/logo.png" rel="icon">
+        <!-- CSS FILES -->                
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,400;0,600;0,700;1,200;1,700&display=swap" rel="stylesheet">
+            
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="/static/css/bootstrap-icons.css" rel="stylesheet">
+
+        <link href="/static/css/vegas.min.css" rel="stylesheet">
+
+        <link href="/static/css/tooplate-barista.css" rel="stylesheet">
+
+        <link href="/static/css/search.css" rel="stylesheet">
+
+        <link href="/static/css/nav.css" rel="stylesheet">
+
+
+
+    </head>
+    
+    <body>
+        
+            <main>
+
+              {% include 'core/nav.html' %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="padding-top: 120px;">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content" style="background-color: #eee;">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: grey;">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p style="color: gray;">
+                Pede condimentum pretium sit fermentum himenaeos odio donec ullamcorper vestibulum accumsan facilisi amet tempus pellentesque hendrerit cursus euismod bibendum elementum morbi proin a sapien gravida risus urna nascetur tortor commodo massa felis purus nec nostra feugiat orci ad lobortis penatibus aliquam pharetra dictumst ridiculus diam maecenas lorem mi sagittis si letius tempor molestie adipiscing ipsum cubilia cras elit porta aenean faucibus eleifend rutrum et lectus volutpat est suspendisse phasellus neque primis ex platea dictum natoque vehicula enim nam malesuada efficitur tellus posuere vivamus magna aliquet torquent nibh ultricies habitant at praesent vel sed lacinia litora suscipit luctus conubia leoPede condimentum pretium sit fermentum himenaeos odio donec ullamcorper vestibulum accumsan facilisi amet tempus pellentesque hendrerit cursus euismod bibendum elementum morbi proin a sapien gravida risus urna nascetur tortor commodo massa felis purus nec nostra feugiat orci ad lobortis penatibus aliquam pharetra dictumst ridiculus diam maecenas lorem mi sagittis si letius tempor molestie adipiscing ipsum cubilia cras elit porta aenean faucibus eleifend rutrum et lectus volutpat est suspendisse phasellus neque primis ex platea dictum natoque vehicula enim nam malesuada efficitur tellus posuere vivamus magna aliquet torquent nibh ultricies habitant at praesent vel sed lacinia litora suscipit luctus conubia leoPede condimentum pretium sit fermentum himenaeos odio donec ullamcorper vestibulum accumsan facilisi amet tempus pellentesque hendrerit cursus euismod bibendum elementum morbi proin a sapien gravida risus urna nascetur tortor commodo massa felis purus nec nostra feugiat orci ad lobortis penatibus aliquam pharetra dictumst ridiculus diam maecenas lorem mi sagittis si letius tempor molestie adipiscing ipsum cubilia cras elit porta aenean faucibus eleifend rutrum et lectus volutpat est suspendisse phasellus neque primis ex platea dictum natoque vehicula enim nam malesuada efficitur tellus posuere vivamus magna aliquet torquent nibh ultricies habitant at praesent vel sed lacinia litora suscipit luctus conubia leoPede condimentum pretium sit fermentum himenaeos odio donec ullamcorper vestibulum accumsan facilisi amet tempus pellentesque hendrerit cursus euismod bibendum elementum morbi proin a sapien gravida risus urna nascetur tortor commodo massa felis purus nec nostra feugiat orci ad lobortis penatibus aliquam pharetra dictumst ridiculus diam maecenas lorem mi sagittis si letius tempor molestie adipiscing ipsum cubilia cras elit porta aenean faucibus eleifend rutrum et lectus volutpat est suspendisse phasellus neque primis ex platea dictum natoque vehicula enim nam malesuada efficitur tellus posuere vivamus magna aliquet torquent nibh ultricies habitant at praesent vel sed lacinia litora suscipit luctus conubia leo
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+<section class="barista-section section-padding section-bg" id="barista-team" style="padding-top: 200px; position: relative; background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(	59, 148, 94, 1)), url(''); " >
+  <!-- <div class="section-overlay"></div> -->
+                    <div class="container">
+                        <div class="row justify-content-center">
+
+                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">Department of Health (DOH) Approved</em>
+                                            <!-- Button trigger modal -->
+        <!-- <button type="button" class="btn btn-primary" >
+          Launch demo modal
+        </button> -->
+                                <h2 class="text-white">Herbal Medicines</h2>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Akapulko</h4>
+
+                                            <p class="badge ms-4"><em>Cassia alata</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">this herbal medicine is used to treat ringworms and skin fungal infections.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Akapulko</h4>
+
+                                            <p class="badge ms-4"><em>Cassia alata</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0">  this herbal medicine is used to treat ringworms and skin fungal infections.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Ampalaya</h4>
+
+                                            <p class="badge ms-4"><em>Momordica charantia</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it most known as a treatment of diabetes (diabetes mellitus), for the non-insulin dependent patients.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bayabas</h4>
+
+                                            <p class="badge ms-4"><em>Psidium guajava</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> to disinfect wounds. Also, it can be used as a mouth wash to treat tooth decay and gum infection.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 mb-4">
+                                <div class="team-block-wrap">
+                                    <div class="team-block-info d-flex flex-column">
+                                        <div class="d-flex mt-auto mb-3">
+                                            <h4 class="text-white mb-0">Bawang</h4>
+
+                                            <p class="badge ms-4"><em>Allium sativum</em></p>
+                                        </div>
+
+                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
+                                    </div>
+
+                                    <div class="team-block-image-wrap">
+                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+        {% include 'core/footer.html' %}
+            
+            </main> 
+
+        <!-- JAVASCRIPT FILES -->
+        <script src="/static/js/jquery.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/jquery.sticky.js"></script>
+        <script src="/static/js/click-scroll.js"></script>
+        <script src="/static/js/vegas.min.js"></script>
+        <script src="/static/js/custom.js"></script>
+
+    </body>
+</html>
+

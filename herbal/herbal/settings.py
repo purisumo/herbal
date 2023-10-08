@@ -143,3 +143,18 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'fournomber@gmail.com' #Change smtp gmail setup for Contacts
+EMAIL_HOST_PASSWORD = 'kwtnxppjwqvauyvu'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+DEFAULT_FROM_EMAIL = 'Curaherb <noreply@curaherb.com>'
+
+EMAIL_SUBJECT_PREFIX = '[Curaherb] '
+
+X_FRAME_OPTIONS = 'ALLOWALL'
