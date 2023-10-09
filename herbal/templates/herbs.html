@@ -52,7 +52,7 @@
                             <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
                                 <em class="text-white">Department of Health (DOH) Approved</em>
 
-                                <h2 class="text-white">Herbal Medicines</h2>
+                                <h2 class="text-white">Herbal Plants</h2>
                             </div>
 
                             {% for herb in herbs %}
@@ -89,7 +89,9 @@
                                                     <!-- <img class="modal-herb" src="https://source.unsplash.com/KUfkX6gVwBU/600x400" alt=""> -->
                                                     <div class="bucket">
                                                       <h3 class="bucket-title" style="color: #f2f2f2;">Herbal Property</h3>
+                                                      <div class="scrollable-content" style="max-height: 400px; overflow-y: auto;">
                                                       <p style="color: #f2f2f2;">{{herb.med_property}}</p>
+                                                      </div>
                                                     </div><!-- .bucket -->
                                                   </li>
                                                   <li>
@@ -97,13 +99,17 @@
                                                     <div class="bucket">
                                                       <h3 class="bucket-title" style="color: #f2f2f2;">Medicinal Use</h3>
                                                       <p style="color: #f2f2f2;">{{herb.med_use}}</p>
+                                                      
                                                     </div><!-- .bucket -->
                                                   </li>
                                                   <li>
                                                     <!-- <img class="modal-herb" src="https://source.unsplash.com/1jKjJjGgDG8/600x400" alt=""> -->
                                                     <div class="bucket">
                                                       <h3 class="bucket-title" style="color: #f2f2f2;">Habitat</h3>
+                                                      <div class="scrollable-content" style="max-height: 400px; overflow-y: auto;">
                                                       <p style="color: #f2f2f2;">{{herb.habitat}}</p>
+                                                      </div>
+                                                      
                                                     </div><!-- .bucket -->
                                                   </li>
                                                 </ul>

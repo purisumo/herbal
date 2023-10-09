@@ -75,84 +75,30 @@
                     <div class="container">
                         <div class="row justify-content-center">
 
-                            <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
-                                <em class="text-white">Department of Health (DOH) Approved</em>
+                            <a href="{% url 'herbs' %}" class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
+                                <em class="text-white">View More</em>
 
-                                <h2 class="text-white">Herbal Medicines</h2>
-                            </div>
-
+                                <h2 class="text-white">Herbal Plants</h2>
+                            </a>
+                            {% for herb in herbs|slice:":4" %}
                             <div class="col-lg-3 col-md-6 col-12 mb-4">
                                 <div class="team-block-wrap">
                                     <div class="team-block-info d-flex flex-column">
                                         <div class="d-flex mt-auto mb-3">
-                                            <h4 class="text-white mb-0">Akapulko</h4>
+                                            <h4 class="text-white mb-0">{{herb.name}}</h4>
 
-                                            <p class="badge ms-4"><em>Cassia alata</em></p>
+                                            <p class="badge ms-4"><em>{{herb.scientific_name}}</em></p>
                                         </div>
 
-                                        <p class="text-white mb-0">  this herbal medicine is used to treat ringworms and skin fungal infections.</p>
+                                        <p class="text-white mb-0">  {{herb.description|slice:':60'}}</p>
                                     </div>
 
                                     <div class="team-block-image-wrap">
-                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
+                                        <img src="{{ herb.image.url }}" class="team-block-image img-fluid" alt="">
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-lg-3 col-md-6 col-12 mb-4">
-                                <div class="team-block-wrap">
-                                    <div class="team-block-info d-flex flex-column">
-                                        <div class="d-flex mt-auto mb-3">
-                                            <h4 class="text-white mb-0">Ampalaya</h4>
-
-                                            <p class="badge ms-4"><em>Momordica charantia</em></p>
-                                        </div>
-
-                                        <p class="text-white mb-0"> it most known as a treatment of diabetes (diabetes mellitus), for the non-insulin dependent patients.</p>
-                                    </div>
-
-                                    <div class="team-block-image-wrap">
-                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-3 col-md-6 col-12 mb-4">
-                                <div class="team-block-wrap">
-                                    <div class="team-block-info d-flex flex-column">
-                                        <div class="d-flex mt-auto mb-3">
-                                            <h4 class="text-white mb-0">Bawang</h4>
-
-                                            <p class="badge ms-4"><em>Allium sativum</em></p>
-                                        </div>
-
-                                        <p class="text-white mb-0"> it mainly reduces cholesterol in the blood and hence, helps control blood pressure.</p>
-                                    </div>
-
-                                    <div class="team-block-image-wrap">
-                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-3 col-md-6 col-12">
-                                <div class="team-block-wrap">
-                                    <div class="team-block-info d-flex flex-column">
-                                        <div class="d-flex mt-auto mb-3">
-                                            <h4 class="text-white mb-0">Bayabas</h4>
-
-                                            <p class="badge ms-4"><em>Psidium guajava</em></p>
-                                        </div>
-
-                                        <p class="text-white mb-0"> to disinfect wounds. Also, it can be used as a mouth wash to treat tooth decay and gum infection.</p>
-                                    </div>
-
-                                    <div class="team-block-image-wrap">
-                                        <img src="/static/image/akapulko.jpg" class="team-block-image img-fluid" alt="">
-                                    </div>
-                                </div>
-                            </div>
-
+                            {% endfor %}
                         </div>
                     </div>
                 </section>
