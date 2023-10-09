@@ -37,25 +37,123 @@ class CustomFileSystemStorage(FileSystemStorage):
         return name
 
 def home(request):
-    
-    return render(request, 'core/home.html')
+
+    herbs = Herb.objects.all()
+
+    return render(request, 'core/home.html', {'herbs': herbs})
 
 def herbs(request):
 
-    return render(request, 'herbs.html')
+    herbs = Herb.objects.all()
+    favorite_herbs = request.user.favorite_set.all().values_list('herb', flat=True)
+
+    return render(request, 'herbs.html', {'herbs': herbs, 'favorite_herbs':favorite_herbs})
 
 def image_search(request):
 
     return render(request, 'image-search.html')
 
 def herbal_map(request):
+    herbs = Herb.objects.all()
+    stores = Store.objects.all()
 
-    return render(request, 'herbal-map.html')
+    # Create a map
+    m = folium.Map(location=[6.918658, 122.077802], zoom_start=13, control_scale=True, max_zoom=20, min_zoom=2, max_bounds=True)
+
+    # Iterate over store objects and create markers
+    for store in stores:
+        lat = store.lat
+        long = store.long
+
+        if lat is not None and long is not None:
+            popup = folium.Popup(store.name)
+            folium.Marker(
+                location=[lat, long],
+                popup=popup,
+            ).add_to(m)
+
+    # Iterate over herb objects and create markers
+    for herb in herbs:
+        lat = herb.lat
+        long = herb.long
+
+
+        if lat is not None and long is not None:
+
+            popup = folium.Popup(herb.name)
+
+            folium.CircleMarker(
+                location=[lat, long],
+                radius=20,
+                color='green',
+                fill=True,
+                fill_color='green',
+                fill_opacity=0.6,
+                popup=popup,
+            ).add_to(m)
+
+    # Get the map HTML
+    map_html = m._repr_html_()
+    context = {
+        'map':map_html,
+        'herbs':herbs
+    }
+
+    return render(request, 'herbal-map.html', context)
+
+def herbal_map_inter(request, name):
+    herbs = Herb.objects.all()
+    stores = Store.objects.all()
+    herb = Herb.objects.get(name=name)
+
+    # Create a map
+    m = folium.Map(location=[herb.lat, herb.long], zoom_start=16, control_scale=True, max_zoom=20, min_zoom=2, max_bounds=True)
+
+    for herb in herbs:
+        lat = herb.lat
+        long = herb.long
+        job_name = herb.name
+            
+        marker = folium.Marker(location=[lat, long], popup=job_name)
+        marker.add_to(m)
+
+    for store in stores:
+        lat = store.lat
+        long = store.long
+
+
+        if lat is not None and long is not None:
+
+            popup = folium.Popup(store.name)
+
+            folium.CircleMarker(
+                location=[lat, long],
+                radius=20,
+                color='green',
+                fill=True,
+                fill_color='green',
+                fill_opacity=0.6,
+                popup=popup,
+            ).add_to(m)
+
+
+    # Render the map to HTML
+    context = {
+        'map': m._repr_html_(),
+        'herbs': herbs,
+        'herb': herb
+    }
+
+    return render(request, 'herbal-map.html', context)
 
 @login_required(login_url='login_or_register')
 def favourite(request):
+    user = request.user
 
-    return render(request, 'favourite.html')
+    # Create a dictionary to store whether each herb is a favorite for the user
+    favorite_herbs = Herb.objects.filter(favorite__user=user)
+
+    return render(request, 'favorite.html', {'favorite_herbs': favorite_herbs})
 
 @login_required
 def toggle_favorite(request, herb_id):
@@ -69,7 +167,13 @@ def toggle_favorite(request, herb_id):
         # Herb is not a favorite, add it
         Favorite.objects.create(user=user, herb=herb)
 
-    return redirect('herbs', herb_id=herb_id)
+    # Redirect to the referring URL
+    referring_url = request.META.get('HTTP_REFERER')
+    if referring_url:
+        return redirect(referring_url)
+    else:
+        # If no referring URL is available, redirect to a default page
+        return redirect('herbs')
 
 @staff_member_required
 def add(request):

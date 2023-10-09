@@ -3,23 +3,48 @@
 {% block content %}
 
 
-<section class="menu-section section-padding" id="section_3" style="padding-top: 100px; padding-bottom: 100px;">
-  <div class="container" data-aos="fade-up">
+<section class="menu-section section-padding d-flex flex-nowrap me-auto" id="section_3" style="padding-top: 100px; padding-bottom: 100px;">
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary mt-5" id="scrollers" >
+    <a class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
+      <!-- <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg> -->
+      <div class="scrolltitle fw-semibold " style="color: #f2f2f2;">Herbal List</div>
+    </a>
+    <div class="scrollarea">  
+      <div class="list-group list-group-flush border-bottom" style="background-color: #182628;">
+        {% for herb in herbs %}
+        <a href="" class="list-group-item list-group-item-action py-3 lh-sm hov" aria-current="true">
+        <div class="d-flex w-100 align-items-center justify-content-between">
+          <div class="mb-1 scrolltxt" style="color: #f2f2f2;">{{herb.name}}</div>
+          <!-- <small>{{job.position}}</small> -->
+        </div>
+        <div class="col-10 mb-1 small scrolltxt" style="color: #f2f2f2;">{{herb.scientific_name}}</div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container" data-aos="fade-up" style="max-width: 1000px;">
     <div class="section-header d-flex justify-content-between align-items-center mb-5">
     </div>
-    <div class="text-center mt-md-5"><h1 id="link">Herb Map</h1></div>
+    <div class="text-center mt-md-5 scrolltxt"><h1 id="link" style="color: #f2f2f2;">Herb Map</h1></div>
     <div class="justify-content-center" id="map-placeholder" style="max-width: 1000px; margin: auto;">
-    <div class="d-flex justify-content-center"> Loading Map </div>
+    {{map|safe}}
+    <!-- <div class="d-flex justify-content-center"> Loading Map </div>
     <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>
           {% if map %}
           {% endif %}
-    </div>
+    </div> -->
   </div>
+
+
+
+
 </section>
 
 
-
-<script>
+<!-- <script>
   var mapLoaded = false;
 
   window.addEventListener("scroll", function () {
@@ -48,6 +73,65 @@
 
 
 
-</script>
+</script> -->
+<style>
+.scrolltitle{
+    font-size: 30px;
+}
 
+#scrollers{
+    width: 300px;
+    max-width: 300px;
+}
+
+.hov{
+    background-color: #182628;
+}
+
+.hov:hover{
+    background-color: rgba(87, 186, 152, 0.7);
+}
+.scrollarea {
+  width: 300px;
+  max-width: 300px;
+  overflow-y: auto;
+  max-height: 80vh; /* Adjust the maximum height as needed */
+}
+
+.scrolltxt{
+    font-size: 24px;
+}
+
+@media (max-width: 769px) {
+  .scrollarea {
+    width: 150px;
+    max-height: 55vh;
+  }
+  #scrollers {
+    width: 150px;
+  }
+  .scrolltxt{
+    font-size: 12px;
+}
+.scrolltitle{
+    font-size: 20px;
+}
+}
+@media (max-width: 426px) {
+  .scrollarea {
+    width: 100px;
+    max-height: 30vh;
+  }
+  #scrollers {
+    width: 100px;
+  }
+  .scrolltxt{
+    font-size: 7px;
+}
+.scrolltitle{
+    font-size: 10px;
+}
+}
+
+</style>
 {% endblock %}

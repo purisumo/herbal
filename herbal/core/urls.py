@@ -7,6 +7,7 @@ urlpatterns = [
     path('Herbs/', views.herbs, name='herbs'),
     path('Image_search/', views.image_search, name='image-search'),
     path('Herbal_Map/', views.herbal_map, name='herbal-map'),
+    path('Herbal_Map_/<str:name>', views.herbal_map_inter, name='herbal-map-interaction'),
     path('Favourite/', views.favourite, name='favourite'),
     path('Recognition/', views.recognition, name='recognition'),
     path('Cam-recognition/', views.cam_recognition, name='cam-recognition'),
