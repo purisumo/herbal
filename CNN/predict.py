@@ -5,9 +5,9 @@ import numpy as np
 
 import tensorflow as tf
 #performing prediction in one of the image found in the chosen dir or any dir
-imag=cv2.imread(os.getcwd() +'/CNN/data/sam.jpg')
+imag=cv2.imread(os.getcwd() +'/CNN/data/d.jpg')
 img_from_ar = Image.fromarray(imag, 'RGB')
-resized_image = img_from_ar.resize((224, 224))
+resized_image = img_from_ar.resize((50, 50))
 
 test_image =np.expand_dims(resized_image, axis=0) 
 

@@ -236,6 +236,7 @@ def recognition(request):
         resized_image = img_from_ar.resize((224, 224))
 
         test_image = np.expand_dims(resized_image, axis=0)
+        test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
         # Load model
         model = tf.keras.models.load_model(os.getcwd() + '/model.h5')
@@ -250,14 +251,26 @@ def recognition(request):
             # Add more classes here if needed
         }
 
-        # Get the predicted class name
         predicted_class_index = np.argmax(result)
-        predicted_class_name = class_mapping.get(predicted_class_index, "Unknown")
+        predicted_class_probability = result[0][predicted_class_index]
 
+        # Set your confidence threshold (e.g., 0.7)
+        confidence_threshold = 80
+        print('probability' + str(predicted_class_probability))
+        if predicted_class_probability < confidence_threshold:
+            predicted_class_name = "Unknown"
+        else:
+            if predicted_class_index in class_mapping:
+                predicted_class_name = class_mapping[predicted_class_index]
+            else:
+                predicted_class_name = "Unknown"
+
+        print( 'index' + str(predicted_class_index))
         return TemplateResponse(
             request,
             "recognition.html",
             {
+                "probability": predicted_class_probability,
                 "message": message,
                 "image": image,
                 "image_url": image_url,
@@ -288,6 +301,7 @@ def cam_recognition(request):
             img_from_ar = Image.fromarray(imag, 'RGB')
             resized_image = img_from_ar.resize((224, 224))
             test_image = np.expand_dims(resized_image, axis=0)
+            test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
             # Load model
             model = tf.keras.models.load_model(os.getcwd() + '/model.h5')
@@ -301,18 +315,25 @@ def cam_recognition(request):
                 # Add more classes here if needed
             }
 
+            predicted_class_index = np.argmax(result)
+            predicted_class_probability = result[0][predicted_class_index]
             # Set a threshold for class probability
-            threshold = 0.89  # Adjust this threshold as needed
+
+            confidence_threshold = 80  # Adjust this threshold as needed
 
             # Check if any class probability exceeds the threshold
-            if np.max(result) >= threshold:
-                # Get the predicted class name
-                predicted_class_index = np.argmax(result)
-                predicted_class_name = class_mapping.get(predicted_class_index, "Unknown")
-            else:
+            print('probability' + str(predicted_class_probability))
+            if predicted_class_probability < confidence_threshold:
                 predicted_class_name = "Unknown"
+            else:
+                if predicted_class_index in class_mapping:
+                    predicted_class_name = class_mapping[predicted_class_index]
+                else:
+                    predicted_class_name = "Unknown"
 
-            return render(request, "cam-recognition.html", {"prediction": predicted_class_name})
+            print( 'index' + str(predicted_class_index))
+
+            return render(request, "cam-recognition.html", {"prediction": predicted_class_name, 'probability': predicted_class_probability})
 
         except Exception as e:
             # Handle errors gracefully
