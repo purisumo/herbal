@@ -1,7 +1,215 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content %}
+<style>
+          .btn-2 {
+          background: rgb(96,9,240);
+          background: linear-gradient(0deg, rgb(13, 240, 9)0%, rgb(5, 240, 115) 100%);
+          border: none;
+          
+        }
+        .btn-2:before {
+          height: 0%;
+          width: 2px;
+        }
+        .btn-2:hover {
+          box-shadow:  4px 4px 6px 0 rgba(255,255,255,.5),
+                      -4px -4px 6px 0 rgba(116, 125, 136, .5), 
+            inset -4px -4px 6px 0 rgba(255,255,255,.2),
+            inset 4px 4px 6px 0 rgba(0, 0, 0, .4);
+        }
+        
+
+
+        #video {
+            border: 1px solid black;
+            box-shadow: 2px 2px 3px black;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        #photo {
+            border: 1px solid black;
+            box-shadow: 2px 2px 3px black;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .camera {
+            width: 100%;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #startbutton {
+            display: block;
+            margin: 20px auto;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+
 <div class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
+    <div style="max-width: auto; margin: auto; margin-top: 80px;">
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold">Capture</h1>
+            <div class="col-lg-6 mx-auto">
+                <div class="contentarea">
+                    <div class="Input">
+                        <form method="POST" name="inputForm" enctype='multipart/form-data'>
+                            {% csrf_token %}
+                            <div class="camera">
+                                <button id="toggleCamera" type="button" class="btn btn-warning">Toggle Camera</button>
+                                <video id="video">Video stream not available.</video>
+                                <button id="startbutton" type="button" class="custom-btn btn-2">Take photo</button>
+                                <input id="webimg" value="" name="src" type="text" style="display: none;">
+                                <canvas id="canvas"></canvas>
+                            </div>
+                            <br>
+                            <div>
+                                <img id="photo" alt="Your image">
+                            </div>
+                            <br>
+                            <button type="submit" class="button custom-btn btn-2" id="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <table class="table">
+                                  <thead>
+                                    <tr>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <th scope="row" class="text-light">Prediction: </th>
+                                      <td colspan="2">{{prediction}}</td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row" class="text-light">Probability: </th>
+                                      {% if probability >= 80 %}
+                                      <td colspan="2">{{ probability|floatformat:0 }}%</td>
+                                      {% else %}
+                                      <td colspan="2"></td>
+                                      {% endif %}
+                                    </tr>
+                                  </tbody>
+                                </table>
+                      <div class="status">
+                          <h3 id="message">{{ message }}</h3>
+                      </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var width = 640; // Set the desired width for the camera video
+        var height = 0; // Height will be calculated based on the aspect ratio
+
+        var streaming = false;
+        var video = null;
+        var canvas = null;
+        var photo = null;
+        var formsrc = null;
+        var startbutton = null;
+        var toggleButton = document.getElementById('toggleCamera');
+
+        function startup() {
+            video = document.getElementById('video');
+            canvas = document.getElementById('canvas');
+            photo = document.getElementById('photo');
+            formsrc = document.getElementById('webimg');
+            startbutton = document.getElementById('startbutton');
+
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function (err) {
+                    console.log("An error occurred: " + err);
+                });
+
+            video.addEventListener('canplay', function (ev) {
+                if (!streaming) {
+                    height = video.videoHeight / (video.videoWidth / width);
+                    if (isNaN(height)) {
+                        height = width / (4 / 3);
+                    }
+                    video.setAttribute('width', width);
+                    video.setAttribute('height', height);
+                    canvas.setAttribute('width', width);
+                    canvas.setAttribute('height', height);
+                    streaming = true;
+                }
+            }, false);
+
+            startbutton.addEventListener('click', function (ev) {
+                takepicture();
+                ev.preventDefault();
+            }, false);
+
+            toggleButton.addEventListener('click', function () {
+                toggleCamera();
+            });
+
+            clearphoto();
+        }
+
+        function clearphoto() {
+            var context = canvas.getContext('2d');
+            context.fillStyle = "#AAA";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            var data = canvas.toDataURL('image/png');
+            photo.setAttribute('src', data);
+        }
+
+        function takepicture() {
+            var context = canvas.getContext('2d');
+            if (width && height) {
+                canvas.width = width;
+                canvas.height = height;
+                context.drawImage(video, 0, 0, width, height);
+                var data = canvas.toDataURL('image/png');
+                photo.setAttribute('src', data);
+                formsrc.setAttribute('value', data);
+            } else {
+                clearphoto();
+            }
+        }
+
+        function toggleCamera() {
+            var tracks = video.srcObject.getTracks();
+            tracks.forEach(track => track.enabled = !track.enabled);
+        }
+
+        window.addEventListener('load', startup, false);
+    })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- //OLD UI -->
+
+
+
+<!-- <div class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
     <div style="max-width: auto; margin: auto; margin-top: 80px;">
     <div class="px-4 py-5 my-5 text-center">
         <h1 class="display-5 fw-bold">Scan</h1>
@@ -192,5 +400,5 @@
   font-size: 16px;
   font-family: "Lucida Grande", "Arial", sans-serif;
 }
-</style>
+</style> -->
 {% endblock %}

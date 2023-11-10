@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DASHBOARD</title>
+
+  <!-- Required meta tags -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="/static/image/logo.png" rel="icon">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+
+  <!-- Custom CSS -->
+  <style>
+    /* Set height of the grid so that it fills the screen */
+    html, body {
+      height: 100%;
+      background-color: #F4EEE0;
+    }
+
+    /* Set padding to match navbar height */
+    body {
+      padding-top: 55px;
+    }
+    
+    /* Sticky sidenav */
+    .sticky {
+      position: fixed;
+      top: 70px;
+    }
+
+    /* Add some padding to the sidenav */
+    .sidenav {
+      padding-top: 20px;
+    }
+    #green {
+      background-color: #57ba98;
+      color: #fff;
+    }
+
+    #green a:hover{
+      background-color: #65ccb8;
+    }
+    
+    #dgreen{
+      background-color: #57ba98;
+      
+    }
+    .nav-placeholder {
+    box-shadow: 0px 5px 10px rgba(8, 36, 3, 0.342);
+}
+
+    .gray {
+      background-color: #e9eee7;
+    }
+
+    @media (min-width: 576px) {
+            main {
+                width: 25%;
+            }
+        }
+      
+    .raise:hover,
+    .raise:focus {
+      box-shadow: 0 0.5em 0.5em -0.4em var(--hover);
+      transform: translateY(-0.25em);
+    }
+
+    .up:hover,
+    .up:focus {
+      box-shadow: inset 0 -3.25em 0 0 var(--hover);
+    }
+
+    .raise {
+      --color: #57ba98;
+      --hover: #65ccb8;
+    }
+
+    .up {
+      --color: #042807;
+      --hover: #94e458;
+    }
+    button {
+      color: var(--color);
+      transition: 0.25s;
+    }
+    button:hover, button:focus {
+      border-color: var(--hover);
+      color: #17181c;
+    }
+
+    button {
+      background: none;
+      border: 2px solid;
+      font: inherit;
+      line-height: 1;
+      margin: 0.5em;
+      padding: 1em 2em;
+      border-radius: 5px;
+    }
+
+  </style>
+</head>
+<body  style = "background-image: url('') ;">
+  <!-- Navigation bar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top nav-placeholder" id="green">
+    <img src="/static/image/ch logo.png" alt="" style="height: 50px; width: 50px;">
+    <a class="navbar-brand btn" href="{% url 'home' %}" style="margin: 0 10px 0;">View Site</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul> -->
+      <form class="d-flex ms-auto me-0" role="search" style="margin: 0 10px 0;">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </nav>
+
+  <!-- Grid container -->
+  <div class="container-fluid h-100">
+    <div class="row h-100">
+
+      <!-- Sticky sidenav -->
+      <div class="d-flex flex-column flex-shrink-0 p-3" style="width: 280px; height: auto;" id="green">
+        <div href="{% url 'dashboard' %}" class=" d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+          <span class="fs-4  p-3">{{user.username|upper}}</span>
+        </div>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a class="nav-link  mb-2 nav-placeholder btn btn-outline-success  p-3" href="{% url 'dashboard' %}" id="green">Herbal List</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link  mb-2 nav-placeholder btn btn-outline-success  p-3" href="" id="green">Herbal Recognition</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link  mb-2 nav-placeholder btn btn-outline-success  p-3" href="{% url 'dash_herb_user' %}" id="green">User Herbal Map Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link  mb-2 nav-placeholder btn btn-outline-success  p-3" href="" id="green">User Herbal Testimonials</a>
+          </li>  
+        </ul>
+      </div>
+      <!-- Main content -->
+      <main class="col-md-10 ml-sm-auto pt-3 mx-auto" role="main" style="width: 70%;">
+          <div class="hero">
+          <div class="container my-5">
+          <div class="container text-center">
+        {% block content %}
+
+            <a href="{% url 'add' %}" class="text-decoration-none text-dark"><button class="raise"> Add New</button></a>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Herb Name</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">Edit</th>
+                  <th scope="col">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for herb in herbs %}
+                <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{herb.name}}</td>
+                  {% if herb.image %}
+                  <td><a href="{{ herb.image.url }}">{{ herb.image.name }}</a></td>
+                  {% endif %}
+                  <td><a href="{% url 'edit' herb.pk %}" class="text-decoration-none text-dark"><button class="up">@Edit</button></a> </td>
+                  <td><a href="{% url 'delete' herb.id %}" class="text-decoration-none text-dark" onclick="return confirm('WARNING!! Press OK to continue DELETING')"><button class="btn btn-danger">Remove</button></a> </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% endblock%}
+          </div>
+          </div>
+          </div>
+      </main>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
+</body>

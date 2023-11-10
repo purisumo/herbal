@@ -2,34 +2,106 @@
 {% load static %}
 {% block content %}
 
+<div class="menu-section">
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 150px;">
+    <div class="modal-content alert alert-info">
+      <div class="modal-header alert alert-info">
+        <h5> How to use </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body alert alert-info">
+        1. Allow GPS access<br>
+        2. Add image<br>
+        3. Choose which Herb<br>
+        4. Click Add<br>
+        Repeat process if error occurs
+        <p>Note: if map doesnt load on mobile turn on desktop site after the map loads you can turn it back off </p>
+      </div>
+    </div>
+  </div>
+</div>
 
-<section class="menu-section section-padding d-flex flex-nowrap me-auto" id="section_3" style="padding-top: 100px; padding-bottom: 100px;">
-<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary mt-5" id="scrollers" >
+
+<section class=" section-padding d-flex flex-nowrap me-auto" id="section_3" style="padding-top: 100px; padding-bottom: 100px;">
+  
+
+
+
+<div style="background-color: #182628;" class="offcanvas offcanvas-start" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel">
+
+  <div class="offcanvas-body">
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" id="scrollers" >
     <a class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
       <!-- <svg class="bi pe-none me-2" width="30" height="24"><use xlink:href="#bootstrap"></use></svg> -->
       <div class="scrolltitle fw-semibold " style="color: #f2f2f2;">Herbal List</div>
     </a>
-    <div class="scrollarea">  
+    <!-- <div class="scrollarea">   -->
       <div class="list-group list-group-flush border-bottom" style="background-color: #182628;">
         {% for herb in herbs %}
-        <a href="" class="list-group-item list-group-item-action py-3 lh-sm hov" aria-current="true">
+        <a href="{% url 'herbal-map-interaction-id' herb.id %}" class="list-group-item list-group-item-action py-3 lh-sm hov" aria-current="true">
         <div class="d-flex w-100 align-items-center justify-content-between">
           <div class="mb-1 scrolltxt" style="color: #f2f2f2;">{{herb.name}}</div>
           <!-- <small>{{job.position}}</small> -->
         </div>
-        <div class="col-10 mb-1 small scrolltxt" style="color: #f2f2f2;">{{herb.scientific_name}}</div>
+        <div class="col-10 mb-1 small scrolltxt" style="color: #f2f2f2;">Admin</div>
+        </a>
+        {% endfor %}
+        {% for herb in mapherbs %}
+        <a href="{% url 'herbal-map-interaction-name' herb.herb %}" class="list-group-item list-group-item-action py-3 lh-sm hov" aria-current="true">
+        <div class="d-flex w-100 align-items-center justify-content-between">
+          <div class="mb-1 scrolltxt" style="color: #f2f2f2;">{{herb.herb}}</div>
+          <!-- <small>{{job.position}}</small> -->
+        </div>
+        <div class="col-10 mb-1 small scrolltxt" style="color: #f2f2f2;">uploaded by: {{herb.uploader}}</div>
         </a>
         {% endfor %}
       </div>
+    <!-- </div> -->
+  </div>
+  </div>
+  <div class="offcanvas-header">
+    ----------
+    <div class="row">
+        <div class="col text-end">
+          <button type="button" class="btn btn-warning " data-bs-dismiss="offcanvas" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+          </button> 
+        </div>
     </div>
   </div>
+</div>
 
-
-  <div class="container" data-aos="fade-up" style="max-width: 1000px;">
+  <div class="container" data-aos="fade-up" style="max-width: 1200px;">
+    
     <div class="section-header d-flex justify-content-between align-items-center mb-5">
     </div>
-    <div class="text-center mt-md-5 scrolltxt"><h1 id="link" style="color: #f2f2f2;">Herb Map</h1></div>
-    <div class="justify-content-center" id="map-placeholder" style="max-width: 1000px; margin: auto;">
+
+    <div class="text-center mt-md-5 scrolltxt">
+      <!-- <h1 id="link" style="color: #f2f2f2;">Herb Map</h1> -->
+      <div class="row" style="margin-bottom: 15px;">
+          <div class="col text-start">
+              <button class="button-effect effect effect-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">
+                  View Lists
+              </button>
+          </div>
+      </div>
+      
+  </div>
+
+    
+    <div class="justify-content-center" id="map-placeholder" style=" margin: auto;">
+      {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong {% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
     {{map|safe}}
     <!-- <div class="d-flex justify-content-center"> Loading Map </div>
     <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>
@@ -37,12 +109,180 @@
           {% endif %}
     </div> -->
   </div>
+  <div class=" py-3">
+    
+    <form class="row gx-3 gy-2 align-items-center">
+      <div class="col-sm-5">
+        <div class="input-group">
+          <input name="image" type="file" accept="image/*" capture="camera"/>
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <label class="visually-hidden" for="autoSizingInputGroup">Herb Name</label>
+        <div class="input-group">
+          <input type="text" name="herb" class="form-control text-bg-light" id="autoSizingInputGroup" placeholder="Herb Name">
+        </div>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-light" id="getLocationButton" style="margin-right: 120px;">Add Location</button>
+        <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+          </svg>
+        </button>
+      </div>
+    </form>    
+  </div>
+
+{% if mapherb %}
+<div class="container-fluid mt-5" style="background-color: #f2f2f2; padding: 25px; border-radius: 10px;">
+  <div class="card mb-3" style="max-width: 1200;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        {% if mapherb.image %}
+        <img src="{{ mapherb.image.url }}" class="img-fluid rounded-start" alt="...">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{mapherb.uploader}}</h5>
+          <p class="card-text">{{mapherb.herb}}</p>
+          <p class="card-text"><small class="text-body-secondary">{{mapherb.timestamp}}</small></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scrollareacom">
+  {% for mapherb in mapherbs %}
+  {% for comment in mapherb.comments.all %}
+    <div class="dialogbox">
+      <div class="body">
+        <span class="tip tip-up"></span>
+        <div class="message">
+          
+            <div class="comment-container">
+              <span style="font-size: 12px;">{{ comment.username.username }}</span><br>
+              <span style="font-size: 20px;">{{ comment.comment }}</span>
+              {% if comment.username == request.user %}
+                <a onclick="return confirm('WARNING!! Press OK to continue DELETING')" href="{% url 'deletecomment' comment.id %}" class="float-end"><button type="submit" class="btn btn-danger btn-sm" style="font-size: 12px;">Delete</button></a>  
+              {% endif %}
+            </div>
+          
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% endfor %}
+  </div>
+  
 
 
 
+  <form method="post">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label"></label>
+      <p class="text-dark"> Comment </p>
+      <textarea name="comment" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+        <input type="hidden" name="map_herb" value="{{ mapherb.pk }}">
+      <button type="submit" class="btn btn-outline-success mt-2">Submit</button>
+  </div>
+  </form>
+</div>
+{% endif %}
 
 </section>
+</div>
 
+
+    <script>
+        // Reload the current page after form submission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+
+<div data-csrf-token="{{ csrf_token }}">
+
+
+<script>
+    var csrfToken = document.querySelector('[data-csrf-token]').getAttribute('data-csrf-token');
+
+    function sendData(locationData, fileData, herbName) {
+        var formData = new FormData();
+        formData.append('location', JSON.stringify(locationData));
+        formData.append('image', fileData);
+        formData.append('herb', herbName);
+
+        fetch('/update_user_data/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Data sent to the server:', data);
+            if (data.status === 'Location Added Successfully') {
+                alert('Location Added Successfully');
+                // Handle success, e.g., show a success message to the user
+            } else {
+                alert('Error: ' + data.error);
+                // Handle error, e.g., show an error message to the user
+            }
+        })
+        .catch(error => {
+            console.error('Error sending data to the server:', error);
+        });
+        }
+
+    function getLocation() {
+        event.preventDefault();
+        console.log('Button clicked!');
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            console.log('Latitude:', latitude);
+            console.log('Longitude:', longitude);
+
+            var fileInput = document.querySelector('input[name="image"]');
+            var selectedFile = fileInput.files[0];
+
+            var herbInput = document.querySelector('input[name="herb"]');
+            var herbName = herbInput.value;
+
+            var locationData = {
+                lat: latitude,
+                long: longitude
+            };
+
+            sendData(locationData, selectedFile, herbName);
+        }, function(error) {
+        // Handle geolocation error
+        console.error('Error getting location:', error);
+        alert('Error getting location: ' + error.message);}); 
+        
+    }
+
+    document.getElementById('getLocationButton').addEventListener('click', getLocation);
+</script>
+
+<script>
+  var csrfToken = document.querySelector('[data-csrf-token]').getAttribute('data-csrf-token');
+  navigator.geolocation.getCurrentPosition(function(position) {
+    var userLocation = {
+        lat: position.coords.latitude,
+        long: position.coords.longitude
+    };
+});
+</script>
+
+<!-- Inside your Django template -->
+</div>
 
 <!-- <script>
   var mapLoaded = false;
@@ -74,15 +314,104 @@
 
 
 </script> -->
+
 <style>
+
+.button-effect {
+  padding: 30px 0px;
+}
+
+.button-effect {
+  background-color: #65ccb8;
+}
+.effect {
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  text-transform: capitalize;
+  /* background-color: - add your own background-color */
+  font-family: "Roboto", sans-serif;
+  /* put your font-family */
+  font-size: 18px;
+  padding: 20px 0px;
+  width: 150px;
+  height: auto;
+  border-radius: 6px;
+  overflow: hidden;
+  border: none;
+}
+/* effect-5 styles */
+.effect.effect-5 {
+  transition: all 0.2s linear 0s;
+}
+.effect.effect-5:before {
+  content: ">";
+  font-family: FontAwesome;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 0 50% 50% 0;
+  transform: scale(0, 1);
+  transform-origin: left center;
+  transition: all 0.2s linear 0s;
+}
+.effect.effect-5:hover {
+  text-indent: 30px;
+}
+.effect.effect-5:hover:before {
+  transform: scale(1, 1);
+  text-indent: 0;
+}
+
+.message {
+  min-height: 30px;
+  border-radius: 3px;
+  font-family: Arial;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #797979;
+}
+
+.dialogbox {
+  position: relative;
+  max-width: 1000px;
+  height: auto;
+  margin: 30px 10px;
+  padding: 5px;
+  background-color: #DADADA;
+  border-radius: 10px;
+  /* border: 5px solid #ccc; */
+}
+
+.tip {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  background: transparent;
+  border: 10px solid #ccc;
+}
+
+.tip-up {
+  top: -19px; /* Same as body margin top + border */
+  left: 10px;
+  border-right-color: transparent;
+  border-left-color: transparent;
+  border-top-color: transparent;
+}
+
+
 .scrolltitle{
     font-size: 30px;
 }
 
-#scrollers{
-    width: 300px;
-    max-width: 300px;
-}
 
 .hov{
     background-color: #182628;
@@ -107,9 +436,6 @@
     width: 150px;
     max-height: 55vh;
   }
-  #scrollers {
-    width: 150px;
-  }
   .scrolltxt{
     font-size: 12px;
 }
@@ -122,9 +448,6 @@
     width: 100px;
     max-height: 30vh;
   }
-  #scrollers {
-    width: 100px;
-  }
   .scrolltxt{
     font-size: 7px;
 }
@@ -133,5 +456,11 @@
 }
 }
 
+.scrollareacom {
+  overflow-y: auto;
+  max-height: 80vh; /* Adjust the maximum height as needed */
+}
+
 </style>
+
 {% endblock %}

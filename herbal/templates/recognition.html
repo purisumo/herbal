@@ -8,13 +8,13 @@
                             <form method="POST" enctype="multipart/form-data">
                               {% csrf_token %}
                               <input
-                                class="custom-file-upload"
+                                class="custom-file-upload custom-btn btn-15"
                                 type="file"
                                 accept="image"
                                 name="image"
                                 id="file"
                               />
-                              <button class="compress_image" type="submit" id="submitBtn">
+                              <button class="compress_image custom-btn btn-2 mt-2" type="submit" id="submitBtn">
                                 Predict
                               </button>
                               <div class="status">
@@ -24,17 +24,34 @@
 
                             <div class="wrapper">
                               <img
-                                src="{% if image_url %}{{ image_url }}{% else %}{% static 'images/default.png' %}{% endif %}"
+                                src="{% if image_url %}{{ image_url }}{% else %}{% static '/image/logo.png' %}{% endif %}"
                                 alt="Compressed Image"
-                                width="400px"
+                                style="max-width: 400px;"
                               />
 
                               <div class="info_container">
-                                <ul class="ul-color">
-                                  <li class="ul-color">Name: <span class="name">{{ image.name }}</span></li>
-                                  <li class="ul-color">Prediction: <span class="type">{{ prediction }}</span></li>
-                                  <li class="ul-color">Probability: <span class="type">{{ probability|floatformat:0 }}%</span></li>
-                                </ul>
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <th scope="row" class="text-light">Image name: </th>
+                                      <td colspan="2">{{image.name}}</td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row" class="text-light">Prediction: </th>
+                                      <td colspan="2">{{prediction}}</td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row" class="text-light">Probability: </th>
+                                      {% if probability >= 80 %}
+                                      <td colspan="2">{{ probability|floatformat:0 }}%</td>
+                                      {% endif %}
+                                    </tr>
+                                  </tbody>
+                                </table>
                               </div>
                             </div>
                             </div>
@@ -43,6 +60,55 @@
                       </div>
                 </section>
 <style>
+  
+  .btn-2 {
+  background: rgb(96,9,240);
+  background: linear-gradient(0deg, rgb(13, 240, 9)0%, rgb(5, 240, 115) 100%);
+  border: none;
+  
+}
+.btn-2:before {
+  height: 0%;
+  width: 2px;
+}
+.btn-2:hover {
+  box-shadow:  4px 4px 6px 0 rgba(255,255,255,.5),
+              -4px -4px 6px 0 rgba(116, 125, 136, .5), 
+    inset -4px -4px 6px 0 rgba(255,255,255,.2),
+    inset 4px 4px 6px 0 rgba(0, 0, 0, .4);
+}
+
+/* 15 */
+.btn-15 {
+  background: #65ccb8;
+  border: none;
+  z-index: 1;
+}
+.btn-15:after {
+  position: absolute;
+  content: "";
+  width: 0;
+  height: 100%;
+  top: 0;
+  right: 0;
+  z-index: -1;
+  background-color: rgb(5, 240, 115);
+  border-radius: 5px;
+   box-shadow:inset 2px 2px 2px 0px rgba(255,255,255,.5),
+   7px 7px 20px 0px rgba(0,0,0,.1),
+   4px 4px 5px 0px rgba(0,0,0,.1);
+  transition: all 0.3s ease;
+}
+.btn-15:hover {
+  color: #fff;
+}
+.btn-15:hover:after {
+  left: 0;
+  width: 100%;
+}
+.btn-15:active {
+  top: 2px;
+}
 @media (max-width: 426px) {
   input{
     max-width: 290px;

@@ -1,0 +1,32 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- <a href="{% url 'add' %}" class="text-decoration-none text-dark"><button class="raise"> Add New</button></a> -->
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Herb Name</th>
+                  <th scope="col">Uploader</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for herb in mapherbs %}
+                <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{herb.herb}}</td>
+                  <td>{{herb.uploader}}</td>
+                  {% if herb.image %}
+                  <td><a href="{{ herb.image.url }}">{{ herb.image.name }}</a></td>
+                  {% endif %}
+                  <td><a href="" class="text-decoration-none text-dark" onclick="return confirm('WARNING!! Press OK to continue DELETING')"><button class="btn btn-danger">Remove</button></a> </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+{% endblock %}

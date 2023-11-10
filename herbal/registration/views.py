@@ -24,7 +24,7 @@ def login_or_register(request):
             if user is not None:
                 login(request, user)
                 if user.is_superuser:
-                    return redirect('home')
+                    return redirect('dashboard')
                 else:
                     return redirect('home')
             else:

@@ -14,8 +14,8 @@
                             <ul class="navbar-nav ms-lg-auto">
                                 <li class="nav-item">
                                     <div id="wrap">
-                                    <form action="{% url 'search' %}" autocomplete="off">
-                                    <input id="search" name="search" type="text" placeholder="Find Your Herb"><input id="search_submit" value="Rechercher" type="submit">
+                                    <form method="get" action="{% url 'search' %}" autocomplete="off">
+                                    <input id="search" name="query" type="text" placeholder="Find Your Herb"><input id="search_submit" value="Rechercher" type="submit">
                                     </form>
                                     </div>
                                 </li>
@@ -63,6 +63,9 @@
                                 <ul class="dropdown">
                                 <li class="active"><a href="{% url 'favourite' %}">Favourites</a></li>
                                 {% if user.is_authenticated %}
+                                {% if user.is_superuser %}
+                                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                                {% endif %}
                                 <li><a href="{% url 'change_password' %}">Change Password</a></li>
                                 <li><a href="{% url 'password_reset' %}">Reset Password</a></li>
                                 <li><a href="{% url 'logout' %}">Log Out</a></li>
