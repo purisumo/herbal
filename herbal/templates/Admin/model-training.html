@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title>Dashboard - Curaherb</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/image/logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/static/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/static/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="/static/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="/static/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/static/assets/js/config.js"></script>
+
+    <style>
+        /* KEYFRAMES */
+
+        @keyframes spin {
+        from {
+            transform: rotate(0);
+        }
+        to{
+            transform: rotate(359deg);
+        }
+        }
+
+        @keyframes spin3D {
+        from {
+            transform: rotate3d(.5,.5,.5, 360deg);
+        }
+        to{
+            transform: rotate3d(0deg);
+        }
+        }
+
+        @keyframes configure-clockwise {
+        0% {
+            transform: rotate(0);
+        }
+        25% {
+            transform: rotate(90deg);
+        }
+        50% {
+            transform: rotate(180deg);
+        }
+        75% {
+            transform: rotate(270deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+        }
+
+        @keyframes configure-xclockwise {
+        0% {
+            transform: rotate(45deg);
+        }
+        25% {
+            transform: rotate(-45deg);
+        }
+        50% {
+            transform: rotate(-135deg);
+        }
+        75% {
+            transform: rotate(-225deg);
+        }
+        100% {
+            transform: rotate(-315deg);
+        }
+        }
+
+        @keyframes pulse {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: .25;
+            transform: scale(.75);
+        }
+        }
+        .spinner-box {
+        width: 300px;
+        height: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        }
+        .leo {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+        }
+
+        .blue-orbit {
+            width: 165px;
+            height: 165px;
+        border: 1px solid #006ba0a5;
+        -webkit-animation: spin3D 3s linear .2s infinite;
+        }
+
+        .green-orbit {
+            width: 120px;
+            height: 120px;
+        border: 1px solid #008437a5;
+        -webkit-animation: spin3D 2s linear 0s infinite;
+        }
+
+        .red-orbit {
+            width: 90px;
+            height: 90px;
+        border: 1px solid #b73d00a5;
+        -webkit-animation: spin3D 1s linear 0s infinite;
+        }
+
+        .white-orbit {
+            width: 60px;
+            height: 60px;
+        border: 2px solid rgb(81, 77, 77);
+        -webkit-animation: spin3D 10s linear 0s infinite;
+        }
+
+        .w1 {
+        transform: rotate3D(1, 1, 1, 90deg);
+        }
+
+        .w2 {
+        transform: rotate3D(1, 2, .5, 90deg);
+        }
+
+        .w3 {
+        transform: rotate3D(.5, 1, 2, 90deg);
+        }
+
+        .loader {
+  position: relative;
+  margin: auto;
+  width: 400px;
+  color: white;
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 250%;
+  background: linear-gradient(180deg, #222 0, #444 100%);
+  box-shadow: inset 0 5px 20px black;
+  text-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+}
+
+.loader:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.loader span {
+  float: left;
+  height: 100px;
+  line-height: 120px;
+  width: 50px;
+}
+
+.loader > span {
+  border-left: 1px solid #444;
+  border-right: 1px solid #222;
+}
+
+.covers {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
+.covers span {
+  background: linear-gradient(180deg, white 0, #ddd 100%);
+  animation: up 2s infinite;
+}
+
+@keyframes up {
+  0%   { margin-bottom: 0; }
+  16%  { margin-bottom: 100%; height: 20px; }
+  50% { margin-bottom: 0; }
+  100% { margin-bottom: 0; }
+}
+
+.covers span:nth-child(2) { animation-delay: .142857s; }
+.covers span:nth-child(3) { animation-delay: .285714s; }
+.covers span:nth-child(4) { animation-delay: .428571s; }
+.covers span:nth-child(5) { animation-delay: .571428s; }
+.covers span:nth-child(6) { animation-delay: .714285s; }
+.covers span:nth-child(7) { animation-delay: .857142s; }
+.covers span:nth-child(8) { animation-delay: .957142s; }
+
+    </style>
+  </head>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        {% include 'Admin/side-nav.html' %}
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <!-- Search -->
+              <!-- <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                  <i class="bx bx-search fs-4 lh-0"></i>
+                  <input
+                    type="text"
+                    class="form-control border-0 shadow-none"
+                    placeholder="Search..."
+                    aria-label="Search..."
+                  />
+                </div>
+              </div> -->
+              <!-- /Search -->
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <!-- Place this tag where you want the button to render. -->
+                <!-- <li class="nav-item lh-1 me-3">
+                  <a
+                    class="github-button"
+                    href="https://github.com/themeselection/sneat-html-admin-template-free"
+                    data-icon="octicon-star"
+                    data-size="large"
+                    data-show-count="true"
+                    aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
+                    >Star</a
+                  >
+                </li> -->
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="/static/image/ch logo.png" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="/static/image/ch logo.png" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">{{user.username}}</span>
+                            <small class="text-muted">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'change_password' %}">
+                        <i class="bx bx-user me-2"></i>
+                        <span class="align-middle">Change Password</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'password_reset' %}">
+                        <i class="bx bx-cog me-2"></i>
+                        <span class="align-middle">Reset Password</span>
+                      </a>
+                    </li>
+                    <li>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="card mb-4" style="background-color: #f2f2f2;">
+                <h5 class="card-header text-light">Training</h5>
+                <div class="card-body">
+                  <div class="demo-vertical-spacing demo-only-element">
+                        <div class="loader loadingOverlay" style="display: none;">
+                            <span>T</span>
+                            <span>R</span>
+                            <span>A</span>
+                            <span>I</span>
+                            <span>N</span>
+                            <span>I</span>
+                            <span>N</span>
+                            <span>G</span>
+                            
+                            <div class="covers">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    <form id="Uploadform" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label text-light">Upload a valid Label.npy File</label>
+                        <input name="label" class="form-control" type="file" accept=".npy" id="formFile">
+                      </div>
+                      <div class="mb-3">
+                        <label for="formFile" class="form-label text-light">Upload a valid 'dataset'.npy herb file</label>
+                        <input name="herb" class="form-control" type="file" accept=".npy" id="formFile">
+                      </div>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <span class="tf-icons bx bx-pie-chart-alt"></span>&nbsp; Load Data
+                        </button>
+                  </div>
+                  </form>
+                </div>
+                <div class="col-md-6 col-lg-4 mx-auto">
+                  <div class="card text-center" style="box-shadow: none; background-color: #f2f2f2;">
+                    <!-- SPINNER ORBITS -->
+                        <div id="" style="display: none;" class="card-body loadingOverlay">
+                        <div class="spinner-box">
+                            <div class="blue-orbit leo">
+                            </div>
+
+                            <div class="green-orbit leo">
+                            </div>
+                            
+                            <div class="red-orbit leo">
+                            </div>
+                            
+                            <div class="white-orbit w1 leo">
+                            </div><div class="white-orbit w2 leo">
+                            </div><div class="white-orbit w3 leo">
+                            </div>
+                        </div>
+                        </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+              
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <!-- <div class="mb-2 mb-md-0">
+
+                </div> -->
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#Uploadform').on('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+        $('.loadingOverlay').show();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "model_training" %}',  // Replace with the actual URL for your view
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('.loadingOverlay').show();
+            },
+            success: function(data) {
+                $('.loadingOverlay').hide();
+                alert(data.message);
+            },
+            error: function(error) {
+                $('.loadingOverlay').hide();
+                alert('Error uploading files');
+            },
+            complete: function() {
+                // This will be called after success or error
+            }
+        });
+    });
+});
+</script>
+
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="/static/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="/static/assets/vendor/libs/popper/popper.js"></script>
+    <script src="/static/assets/vendor/js/bootstrap.js"></script>
+    <script src="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="/static/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="/static/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+    <!-- Main JS -->
+    <script src="/static/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="/static/assets/js/dashboards-analytics.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>

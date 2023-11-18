@@ -3,8 +3,9 @@
 {% block content %}
                 <section class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
                       <div style="max-width: auto; margin: auto; margin-top: 80px;">
-                      <div class="px-4 py-5 my-5 text-center">
+                      <div class="px-4 py-5 my-5">
                           <div class="col-lg-6 mx-auto">
+                          <div class=" text-center">
                             <form method="POST" enctype="multipart/form-data">
                               {% csrf_token %}
                               <input
@@ -14,41 +15,62 @@
                                 name="image"
                                 id="file"
                               />
-                              <button class="compress_image custom-btn btn-2 mt-2" type="submit" id="submitBtn">
+                              <button class="compress_image custom-btn btn-2 mt-2 ms-4" type="submit" id="submitBtn">
                                 Predict
                               </button>
                               <div class="status">
                                 <p id="message">{{ message }}</p>
                               </div>
                             </form>
-
+                            
                             <div class="wrapper">
                               <img
-                                src="{% if image_url %}{{ image_url }}{% else %}{% static '/image/logo.png' %}{% endif %}"
-                                alt="Compressed Image"
-                                style="max-width: 400px;"
+                                src="{% if image_url %}{{ image_url }}{% else %}{% static '' %}{% endif %}"
+                                style="max-width: 400px; margin: 20px;"
                               />
-
+                              </div>
                               <div class="info_container">
-                                <table class="table">
+                                <div class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); max-height:400px; border-radius: 0%; text-align: justify;">  
+                                <table class="table team-block-info">
                                   <thead>
-                                    <tr>
-                                    </tr>
+                                    <th scope="col" class="text-light">Labels</th>
+                                    <th scope="col" class="text-light">Output</th>
+                                    <th scope="col"></th>
                                   </thead>
                                   <tbody>
                                     <tr>
                                       <th scope="row" class="text-light">Image name: </th>
-                                      <td colspan="2">{{image.name}}</td>
+                                      <td colspan="2" class="text-light">{{image.name}}</td>
                                     </tr>
                                     <tr>
                                       <th scope="row" class="text-light">Prediction: </th>
-                                      <td colspan="2">{{prediction}}</td>
+                                      {% if probability >= 0.60 %}
+                                      <td colspan="2" class="text-light">{{prediction}}</td>
+                                      {% elif probability >= 0.40 %}
+                                      <td colspan="2" class="text-light">Probable {{prediction}}</td>
+                                      {% elif probability %}
+                                      <td colspan="2" class="text-light">Unknown</td>
+                                      {% else %}
+                                      <td colspan="2"></td>
+                                      {% endif %}
                                     </tr>
                                     <tr>
                                       <th scope="row" class="text-light">Probability: </th>
-                                      {% if probability >= 80 %}
-                                      <td colspan="2">{{ probability|floatformat:0 }}%</td>
-                                      {% endif %}
+                                      
+                                      <td colspan="2" class="text-light">
+                                        {% for class_name, probability in class_probabilities %}
+                                            {{ class_name }}: {{ probability }}<br>
+                                        {% endfor %}
+                                      </td>
+                                      
+                                    </tr>
+                                    <tr>
+                                      <th colspan="3" scope="row" class="text-light" style="text-align: center;">
+                                        <form method="get" action="{% url 'search' %}" autocomplete="off">
+                                            <input name="query" type="text" placeholder="Find Your Herb {{ prediction }}" value="{{ prediction }}" style="display: none;">
+                                            <button type="submit" class="btn btn-outline-success">See More </button>
+                                        </form>
+                                      </th>
                                     </tr>
                                   </tbody>
                                 </table>

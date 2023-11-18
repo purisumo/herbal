@@ -61,7 +61,7 @@
                             <!-- Btn-->
                             <button class="btn2"><span>Account</span>
                                 <ul class="dropdown">
-                                <li class="active"><a href="{% url 'favourite' %}">Favourites</a></li>
+                                <li class="active"><a href="{% url 'favourite' %}">User Menu</a></li>
                                 {% if user.is_authenticated %}
                                 {% if user.is_superuser %}
                                 <li><a href="{% url 'dashboard' %}">Dashboard</a></li>

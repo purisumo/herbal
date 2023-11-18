@@ -22,17 +22,17 @@
 
 
         #video {
-            border: 1px solid black;
+            /* border: 1px solid black; */
             box-shadow: 2px 2px 3px black;
             width: 100%;
-            max-width: 640px;
+            max-width: 500px;
         }
 
         #photo {
-            border: 1px solid black;
+            /* border: 1px solid black; */
             box-shadow: 2px 2px 3px black;
             width: 100%;
-            max-width: 640px;
+            max-width: 500px;
         }
 
         #canvas {
@@ -57,60 +57,96 @@
     </style>
 
 <div class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
-    <div style="max-width: auto; margin: auto; margin-top: 80px;">
-        <div class="px-4 py-5 my-5 text-center">
-            <h1 class="display-5 fw-bold">Capture</h1>
-            <div class="col-lg-6 mx-auto">
-                <div class="contentarea">
-                    <div class="Input">
-                        <form method="POST" name="inputForm" enctype='multipart/form-data'>
-                            {% csrf_token %}
-                            <div class="camera">
-                                <button id="toggleCamera" type="button" class="btn btn-warning">Toggle Camera</button>
-                                <video id="video">Video stream not available.</video>
-                                <button id="startbutton" type="button" class="custom-btn btn-2">Take photo</button>
-                                <input id="webimg" value="" name="src" type="text" style="display: none;">
-                                <canvas id="canvas"></canvas>
-                            </div>
-                            <br>
-                            <div>
-                                <img id="photo" alt="Your image">
-                            </div>
-                            <br>
-                            <button type="submit" class="button custom-btn btn-2" id="submit">Submit</button>
-                        </form>
+    <div style="max-width: auto; margin: auto;">
+        <div class="container-fluid">
+    <div class="row">
+        <!-- Column 1 -->
+        <div class="col-lg-6">
+            <div class=" py-5 text-center">
+                <div class="col-lg-10 ms-lg-3">
+                    <div class="contentarea">
+                        <div class="Input">
+                            <form method="POST" name="inputForm" enctype='multipart/form-data'>
+                                {% csrf_token %}
+                                <div class="camera">
+                                    <button id="toggleCamera" type="button" class="btn btn-warning mb-2">Toggle Camera</button>
+                                    <video id="video">Video stream not available.</video>
+                                    <button id="startbutton" type="button" class="custom-btn btn-2">Take photo</button>
+                                    <input id="webimg" value="" name="src" type="text" style="display: none;">
+                                    <canvas id="canvas"></canvas>
+                                </div>
+                                <button type="submit" class="button custom-btn btn-2" id="submit">Classify</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <table class="table">
-                                  <thead>
-                                    <tr>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <th scope="row" class="text-light">Prediction: </th>
-                                      <td colspan="2">{{prediction}}</td>
-                                    </tr>
-                                    <tr>
-                                      <th scope="row" class="text-light">Probability: </th>
-                                      {% if probability >= 80 %}
-                                      <td colspan="2">{{ probability|floatformat:0 }}%</td>
-                                      {% else %}
-                                      <td colspan="2"></td>
-                                      {% endif %}
-                                    </tr>
-                                  </tbody>
-                                </table>
-                      <div class="status">
-                          <h3 id="message">{{ message }}</h3>
-                      </div>
             </div>
         </div>
+
+        <!-- Column 2 -->
+        <div class="col-lg-6" style="align-self: center;">
+          <div class="py-5" style="text-align: -webkit-center;">
+            
+            <div class="col-lg-10 ms-lg-3">
+              <button type="button" class="btn btn-warning mb-2" style="opacity: 0;">Toggle Camera</button>
+              <div>
+                  <img id="photo" alt="Your image">
+            </div>
+            <br>
+            </div>
+            <div class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); height: 270px; border-radius: 0%;">  
+              <table class="table team-block-info">
+                      <thead>
+                        <tr>
+                          <th scope="col" class="text-light">Labels</th>
+                          <th scope="col" class="text-light">Output</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                        <th scope="row" class="text-light">Prediction: </th>
+                        {% if probability >= 0.60 %}
+                        <td colspan="2" class="text-light">{{prediction}}</td>
+                        {% elif probability >= 0.30 %}
+                        <td colspan="2" class="text-light">Probable {{prediction}}</td>
+                        {% elif probability %}
+                        <td colspan="2" class="text-light">Unknown</td>
+                        {% else %}
+                        <td colspan="2"></td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <th scope="row" class="text-light">Probability: </th>
+                        <td colspan="2" class="text-light">
+                            {% for class_name, probability in class_probabilities.items %}
+                                {{ class_name }}: {{ probability }}<br>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    <tr>
+                      <th colspan="3" scope="row" class="text-light text-center">
+                        <form method="get" action="{% url 'search' %}" autocomplete="off">
+                          <input name="query" type="text" placeholder="Find Your Herb {{ prediction }}" value="{{ prediction }}" style="display: none;">
+                          <button type="submit" class="btn btn-outline-success">See More </button>
+                        </form>
+                      </th>
+                    </tr>
+                </tbody>
+              </table>
+            <div class="status">
+                <h3 id="message">{{ message }}</h3>
+            </div>
+            </div>  
+        </div>
+        </div>
+    </div>
+</div>
+
     </div>
 </div>
 <script>
     (function () {
-        var width = 640; // Set the desired width for the camera video
+        var width = 500; // Set the desired width for the camera video
         var height = 0; // Height will be calculated based on the aspect ratio
 
         var streaming = false;

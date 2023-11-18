@@ -155,8 +155,7 @@
   </div>
 
   <div class="scrollareacom">
-  {% for mapherb in mapherbs %}
-  {% for comment in mapherb.comments.all %}
+    {% for comment in mapherb.comments.all %}
     <div class="dialogbox">
       <div class="body">
         <span class="tip tip-up"></span>
@@ -174,7 +173,6 @@
       </div>
     </div>
     {% endfor %}
-  {% endfor %}
   </div>
   
 

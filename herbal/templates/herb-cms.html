@@ -1,8 +1,8 @@
-{% extends 'dashboard.html' %}
+{% extends 'Admin/index.html' %}
 {% load static %}
 {% load custom_filters %}
 {% block content %}
-
+<div class="container-xxl flex-grow-1 container-p-y">
 <h2>Herbal Add/Edit</h2>
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -21,7 +21,7 @@
         {% endfor %}
         <button type="submit">Proceed</button>
       </form>
-
+</div>
 <style>
     .form-group {
         margin-bottom: 10px;

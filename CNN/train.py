@@ -47,7 +47,7 @@ model_checkpoint = keras.callbacks.ModelCheckpoint(
 # CNN https://www.tensorflow.org/tutorials/images/cnn
 
 model = models.Sequential()
-model.add(layers.Conv2D(16, (3, 3), activation='relu', input_shape=(50, 50, 3)))
+model.add(layers.Conv2D(16, (3, 3), activation='relu', input_shape=(224, 224, 3)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(128, (3, 3), activation='relu'))

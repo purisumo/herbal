@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+{% load custom_tags %}
+
+<html
+  lang="en"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="../assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title>Dashboard - Curaherb</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/image/logo.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/static/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/static/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/static/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="/static/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="/static/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/static/assets/js/config.js"></script>
+    <style>
+        @-webkit-keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(180deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+        }
+        @keyframes rotate {
+        0% {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(180deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+        }
+        @-webkit-keyframes rotate2 {
+        0% {
+            transform: rotate(0deg);
+            border-top-color: rgba(0, 0, 0, 0.5);
+        }
+        50% {
+            transform: rotate(180deg);
+            border-top-color: rgba(0, 0, 255, 0.5);
+        }
+        100% {
+            transform: rotate(360deg);
+            border-top-color: rgba(0, 0, 0, 0.5);
+        }
+        }
+        @keyframes rotate2 {
+        0% {
+            transform: rotate(0deg);
+            border-top-color: rgba(0, 0, 0, 0.5);
+        }
+        50% {
+            transform: rotate(180deg);
+            border-top-color: rgba(0, 0, 255, 0.5);
+        }
+        100% {
+            transform: rotate(360deg);
+            border-top-color: rgba(0, 0, 0, 0.5);
+        }
+        }
+        #imagePreview {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        img {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            
+        }
+        .loader {
+        position: relative;
+        margin: 75px auto;
+        width: 150px;
+        height: 150px;
+        display: block;
+        overflow: hidden;
+        }
+        .loader div {
+        height: 100%;
+        }
+        .loader4, .loader4 div {
+        border-radius: 50%;
+        padding: 8px;
+        border: 2px solid transparent;
+        -webkit-animation: rotate linear 3.5s infinite;
+                animation: rotate linear 3.5s infinite;
+        border-radius: 50%;
+        padding: 4px;
+        -webkit-animation: rotate2 4s infinite linear;
+                animation: rotate2 4s infinite linear;
+        }
+
+        div:hover {
+        -webkit-animation-play-state: paused;
+                animation-play-state: paused;
+        }
+
+        .loader, .loader * {
+        will-change: transform;
+        }
+    </style>
+  </head>
+
+  <body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Menu -->
+
+        {% include 'Admin/side-nav.html' %}
+        
+        <!-- / Menu -->
+
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Navbar -->
+
+          <nav
+            class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                <i class="bx bx-menu bx-sm"></i>
+              </a>
+            </div>
+
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online">
+                      <img src="/static/image/ch logo.png" alt class="w-px-40 h-auto rounded-circle" />
+                    </div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="#">
+                        <div class="d-flex">
+                          <div class="flex-shrink-0 me-3">
+                            <div class="avatar avatar-online">
+                              <img src="/static/image/ch logo.png" alt class="w-px-40 h-auto rounded-circle" />
+                            </div>
+                          </div>
+                          <div class="flex-grow-1">
+                            <span class="fw-semibold d-block">{{user.username}}</span>
+                            <small class="text-muted">Admin</small>
+                          </div>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'change_password' %}">
+                        <i class="bx bx-user me-2"></i>
+                        <span class="align-middle">Change Password</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'password_reset' %}">
+                        <i class="bx bx-cog me-2"></i>
+                        <span class="align-middle">Reset Password</span>
+                      </a>
+                    </li>
+                    <li>
+                    </li>
+                    <li>
+                      <div class="dropdown-divider"></div>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" href="{% url 'logout' %}">
+                        <i class="bx bx-power-off me-2"></i>
+                        <span class="align-middle">Log Out</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <!--/ User -->
+              </ul>
+            </div>
+          </nav>
+
+          <!-- / Navbar -->
+
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+
+            <!-- Content -->
+            <div class="container-xxl flex-grow-1 container-p-y">
+                {% if error_message %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong {% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ error_message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                {% endif %}
+                {% if warning_message  %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong {% if message.tags %} class="{{ message.tags }}"{% endif %}> {{ warning_message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card overflow-hidden" style="max-height: 400px;">
+                            <h5 class="card-header">Selected Images</h5>
+                            <div class="card-body" style="overflow-y: auto;">
+                                <div id="imagePreview"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <h5 class="card-header">Dataset Preparation</h5>
+                            <div class="card-body">
+                            <div class="mb-3">
+                                <form id="uploadForm" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div>
+                                    <label for="defaultFormControlInput" class="form-label">Herb Class Name:</label>
+                                    <input name="class_name" type="text" class="form-control" id="defaultFormControlInput" placeholder="Class Name" aria-describedby="defaultFormControlHelp">
+                                    <div id="defaultFormControlHelp" class="form-text">
+                                    Please Enter Correct Class Name
+                                    </div>
+                                </div>
+                                <label for="formFileMultiple" class="form-label">Multiple files input</label>
+                                <input name="images" class="form-control" type="file" accept=".png, .jpg, .jpeg, .jfif" id="imageInput" multiple onchange="displaySelectedImages()">
+                                <button type="submit" class="btn rounded-pill btn-success mt-5">Prepare Dataset</button>
+                                </form>
+                            </div>
+                                <div class="progress">
+                                        <div class="progress-bar" role="progressbar" style="width: {{progress}}%;" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100">
+                                            {{progress}}
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                <div class="card mt-5">
+                    <div id="loadingOverlay" style="display: none;" class="mx-auto"><h2>Compiling</h2>
+                    <div  class='loader loader4'>
+                        <div>
+                            <div>
+                            <div>
+                                <div>
+                                <div>
+                                    <div>
+                                    <div>
+                                        <div>
+                                        <div>
+                                            <div></div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                <h5 class="card-header">Dataset List </h5>
+                <div>
+                    <button id="processImagesButton" type="button" class="btn rounded-pill btn-outline-success ms-3 mb-md-3">     
+                        Compile New Dataset
+                    </button>
+                </div> 
+                
+                <div class="table-responsive text-nowrap">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Number Of Images</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                    {% for dataset in datasets %}
+                        {% ifchanged dataset.class_name %}
+                            <tr>
+                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ dataset.class_name }}</strong></td>
+                                <td>{% get_total_images dataset.class_name %}</td>
+                                
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a onclick="return confirm('WARNING!! Press OK to continue DELETING')" class="dropdown-item" href="{% url 'delete_dataset' dataset.id %}">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endifchanged %}
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+                </div>
+                
+            </div>    
+            <!-- / Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                <!-- <div class="mb-2 mb-md-0">
+                  ©
+                  <script>
+                    document.write(new Date().getFullYear());
+                  </script>
+                  , made with ❤️ by
+                  <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                </div>
+                <div>
+                  <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+                  <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+
+                  <a
+                    href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+                    target="_blank"
+                    class="footer-link me-4"
+                    >Documentation</a
+                  >
+
+                  <a
+                    href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
+                    target="_blank"
+                    class="footer-link me-4"
+                    >Support</a
+                  >
+                </div> -->
+              </div>
+            </footer>
+            <!-- / Footer -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#uploadForm').on('submit', function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = (evt.loaded / evt.total) * 100;
+                        $(".progress-bar").width(percentComplete + '%');
+                        $(".progress-bar").attr('aria-valuenow', percentComplete);
+                        $(".progress-bar").text(percentComplete.toFixed(2) + '%');
+                    }
+                }, false);
+                return xhr;
+            },
+            type: 'POST',
+            url: '{% url "dataset_upload" %}',  // Replace with the actual URL for your view
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                // Handle the response after the upload is complete
+                alert(data.message);
+
+                // Check progress value to determine if the upload is complete
+                if (data.progress) {
+                    // Update the progress bar
+                    $(".progress-bar").width(data.progress + '%');
+                    $(".progress-bar").attr('aria-valuenow', data.progress);
+                    $(".progress-bar").text(data.progress.toFixed(2) + '%');
+                }
+
+                // Check if the upload is complete (progress is 100)
+                if (data.progress === 100) {
+                    // Redirect to the specified URL
+                    window.location.href = 'dataset_upload';
+                }
+            },
+            error: function(error) {
+                alert('Error uploading file');
+            }
+        });
+    });
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#processImagesButton').on('click', function() {
+        $('#loadingOverlay').show();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "process_images" %}',  // Replace with the actual URL for your view
+            success: function(data) {
+                $('#loadingOverlay').hide();
+                alert(data.message);
+                window.location.href = '{% url "download_processed_data" %}';
+            },
+            error: function(error) {
+                $('#loadingOverlay').hide();
+                alert('Error processing images');
+            }
+        });
+    });
+});
+</script>
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!-- Content wrapper -->
+        </div>
+        <!-- / Layout page -->
+      </div>
+
+      <!-- Overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <!-- <div class="buy-now">
+      <a
+        href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/"
+        target="_blank"
+        class="btn btn-danger btn-buy-now"
+        >Upgrade to Pro</a
+      >
+    </div> -->
+    <script>
+    function displaySelectedImages() {
+        // Get the file input element
+        const input = document.getElementById('imageInput');
+
+        // Get the container where we'll display the images
+        const previewContainer = document.getElementById('imagePreview');
+
+        // Clear any previous images
+        previewContainer.innerHTML = '';
+
+        // Get the selected files
+        const files = input.files;
+
+        // Iterate over the selected files
+        for (const file of files) {
+            // Create a FileReader to read the file
+            const reader = new FileReader();
+
+            // Define the callback for when the file is loaded
+            reader.onload = function(e) {
+                // Create an image element
+                const img = document.createElement('img');
+
+                // Set the source of the image to the data URL
+                img.src = e.target.result;
+
+                // Add the image to the preview container
+                previewContainer.appendChild(img);
+            };
+
+            // Read the file as a data URL
+            reader.readAsDataURL(file);
+        }
+    }
+    </script>
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="/static/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="/static/assets/vendor/libs/popper/popper.js"></script>
+    <script src="/static/assets/vendor/js/bootstrap.js"></script>
+    <script src="/static/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="/static/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="/static/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+    <!-- Main JS -->
+    <script src="/static/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="/static/assets/js/dashboards-analytics.js"></script>
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>

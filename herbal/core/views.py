@@ -16,7 +16,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from django.contrib import messages
-from django.http import HttpResponseServerError, Http404, JsonResponse
+from django.http import HttpResponseServerError, Http404, JsonResponse, HttpResponse
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.db.models import Q
 from django.conf import settings
@@ -29,13 +29,25 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView, UpdateView
 from django.core.files.storage import default_storage
 from django.urls import reverse_lazy, reverse
+from zipfile import ZipFile
+
 import json
 import logging
-from django.db.models import Count
-from random import randint
+from registration.models import User
 
-from .forms import HerbForm, MapCommentForm, TestimonialsForm
-from .models import Herb, Store, Favorite, MapHerb, MapComment, Testimonials
+from django.db.models import Count, DateField
+from datetime import datetime
+from django.db.models.functions import TruncWeek, TruncHour, TruncDate
+from random import randint
+from django.utils import timezone
+from django.contrib.auth import get_user_model, login, logout
+from django.contrib.sessions.models import Session
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from .consumers import TrainingProgressConsumer
+
+from .forms import *
+from .models import *
 
 def suggest_similarities(herbs):
     # Extract relevant fields from herbs
@@ -79,31 +91,17 @@ def home(request):
 
     return render(request, 'core/home.html', {'herbs': herbs})
 
-@staff_member_required(login_url=reverse_lazy('login_or_register'))
-def admin_home(request):
-    herbs = Herb.objects.all()
-    
-
-    context = {
-        'herbs':herbs
-    }
-
-    return render(request, 'dashboard.html', context )
-
-def dash_herb_user(request):
-    mapherbs = MapHerb.objects.all()
-
-    context = {
-        'mapherbs':mapherbs
-    }
-
-    return render(request,  'dash-herb-user.html', context)
-
 
 def herbs(request):
 
     herbs = Herb.objects.all()
-    favorite_herbs = request.user.favorite_set.all().values_list('herb', flat=True)
+
+    if request.user.is_authenticated:
+        # If authenticated, get the favorite_herbs
+        favorite_herbs = request.user.favorite_set.all().values_list('herb', flat=True)
+    else:
+        # If not authenticated, set favorite_herbs to an empty list or handle it as appropriate
+        favorite_herbs = []
     # Usage:
     suggested_similarities = suggest_similarities(herbs)
     # Get the total number of herbs
@@ -112,7 +110,7 @@ def herbs(request):
     random_index = randint(0, total_herbs - 1)
     # Get a random herb
     random_herb = Herb.objects.all()[random_index]
-    testimonials = Testimonials.objects.all()
+    comments = Testimonials.objects.all()
 
     form = TestimonialsForm()
 
@@ -139,7 +137,7 @@ def herbs(request):
         'favorite_herbs':favorite_herbs,
         'suggested_similarities':suggested_similarities,
         'random_herb':random_herb,
-        'testimonials':testimonials,
+        'comments':comments,
     }
 
     return render(request, 'herbs.html', context)
@@ -154,6 +152,7 @@ def deletetesti(request, id):
 def image_search(request):
 
     return render(request, 'image-search.html')
+
 
 def update_user_data(request):
     try:
@@ -189,7 +188,7 @@ def update_user_data(request):
             return JsonResponse({'error': 'Invalid request method'})
     except Exception as e:
         logger.exception('An error occurred: %s', str(e))
-        return JsonResponse({'error': 'Internal server error'})
+        return JsonResponse({'error': 'Please Log in'})
 
 
 def herbal_map(request):
@@ -253,9 +252,9 @@ def herbal_map(request):
             folium.CircleMarker(
                 location=[lat, long],
                 radius=20,
-                color='green',
+                color='yellow',
                 fill=True,
-                fill_color='green',
+                fill_color='yellow',
                 fill_opacity=0.4,
                 popup=popup,
             ).add_to(herb_user_group)
@@ -278,6 +277,7 @@ def herbal_map(request):
     }
 
     return render(request, 'herbal-map.html', context)
+
 
 def herbal_map_inter(request, id=None, herb=None):
     herbs = Herb.objects.all()
@@ -364,10 +364,10 @@ def herbal_map_inter(request, id=None, herb=None):
             folium.CircleMarker(
                 location=[lat, long],
                 radius=20,
-                color='green',
+                color='yellow',
                 fill=True,
-                fill_color='green',
-                fill_opacity=0.4,
+                fill_color='yellow',
+                fill_opacity=0.1,
                 popup=popup,
             ).add_to(herb_user_group)
 
@@ -391,16 +391,43 @@ def herbal_map_inter(request, id=None, herb=None):
 
     return render(request, 'herbal-map.html', context)
 
-@login_required(login_url='login_or_register')
+@login_required(login_url='/login_or_register')
 def favourite(request):
     user = request.user
 
     # Create a dictionary to store whether each herb is a favorite for the user
-    favorite_herbs = Herb.objects.filter(favorite__user=user)
+    favorite_herbs = Herb.objects.filter(favorites__user=user)
+    
+    uploads = MapHerb.objects.filter(uploader=user)
 
-    return render(request, 'favorite.html', {'favorite_herbs': favorite_herbs})
+    context = {
+        'favorite_herbs': favorite_herbs,
+        'uploads':uploads,
+        }
 
-@login_required
+    return render(request, 'favorite.html', context)
+
+class user_edit_upload(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = MapHerb
+    fields = ['herb','image']
+    success_url = reverse_lazy('dashboard')
+    template_name = 'user-cms.html'
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+    
+    def post(self, request, *args, **kwargs):
+        # Get the existing object
+        self.object = self.get_object()
+
+        # Delete previous image if it exists
+        previous_image = self.object.image
+        if previous_image:
+            default_storage.delete(previous_image.path)
+
+        return super().post(request, *args, **kwargs)
+    
+@login_required(login_url='/login_or_register')
 def toggle_favorite(request, herb_id):
     herb = get_object_or_404(Herb, pk=herb_id)
     user = request.user
@@ -420,7 +447,7 @@ def toggle_favorite(request, herb_id):
         # If no referring URL is available, redirect to a default page
         return redirect('herbs')
 
-@staff_member_required
+@staff_member_required(login_url='/login_or_register')
 def add(request):
 
     form = HerbForm()
@@ -453,7 +480,7 @@ class edit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
         return super().post(request, *args, **kwargs)
     
-@staff_member_required
+@staff_member_required(login_url='/login_or_register')
 def delete(request, id):
     herb = Herb.objects.get(id=id)
 
@@ -468,6 +495,7 @@ def delete(request, id):
 
     return redirect('dashboard')
 
+@login_required(login_url='/login_or_register')
 def deletecomment(request, id):
     com = get_object_or_404(MapComment, id=id)
     com.delete()
@@ -485,8 +513,25 @@ def search(request):
     return render(request, 'herbs.html', {'herbs': herbs})
 
 
+def recognition_prediction(request):
+    query = request.GET.get('search', '')
+
+    herbs = Herb.objects.filter(Q(name__icontains=query) | Q(description__icontains=query) | Q(med_use__icontains=query) | Q(med_property__icontains=query) | Q(potential_SE__icontains=query))
+
+    if not herbs:
+        messages.info(request, ':( Sorry Keyword not Found Please Try Again')
+
+    return render(request, 'herbs.html', {'herbs': herbs})
+
 def recognition(request):
     message = ""
+
+    with open('class_mapping.json', 'r') as file:
+        loaded_class_mapping_json = file.read()
+
+    class_mapping = json.loads(loaded_class_mapping_json)
+    class_mapping = {int(key): value for key, value in class_mapping.items()}
+    print(class_mapping)
     # prediction = ""
     fss = CustomFileSystemStorage()
     try:
@@ -505,24 +550,25 @@ def recognition(request):
         test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
         # Load model
-        model = tf.keras.models.load_model(os.getcwd() + '/model.h5')
+        model = tf.keras.models.load_model('best_model.h5')
 
         result = model.predict(test_image)
-
-        # Define class mapping
-        class_mapping = {
-            0: "Adelfa",
-            1: "ALOE VERA",
-            2: "sambong",
-            # Add more classes here if needed
-        }
-
+        
         predicted_class_index = np.argmax(result)
         predicted_class_probability = result[0][predicted_class_index]
 
         # Set your confidence threshold (e.g., 0.7)
-        confidence_threshold = 80
+        confidence_threshold = 0.1
         print('probability' + str(predicted_class_probability))
+
+        top_3_probabilities = {class_mapping[i]: result[0][i]  * 100 for i in range(len(class_mapping))}
+        # Sort the dictionary by values in descending order
+        sorted_probabilities = sorted(top_3_probabilities.items(), key=lambda x: x[1], reverse=True)
+
+        # Take only the top 3 entries
+        class_probabilities = sorted_probabilities[:3]
+        
+
         if predicted_class_probability < confidence_threshold:
             predicted_class_name = "Unknown"
         else:
@@ -532,6 +578,7 @@ def recognition(request):
                 predicted_class_name = "Unknown"
 
         print( 'index' + str(predicted_class_index))
+
         return TemplateResponse(
             request,
             "recognition.html",
@@ -541,6 +588,7 @@ def recognition(request):
                 "image": image,
                 "image_url": image_url,
                 "prediction": predicted_class_name,
+                'class_probabilities':class_probabilities,
             },
         )
     except MultiValueDictKeyError:
@@ -551,6 +599,13 @@ def recognition(request):
         )
 
 def cam_recognition(request):
+
+    with open('class_mapping.json', 'r') as file:
+        loaded_class_mapping_json = file.read()
+
+    class_mapping = json.loads(loaded_class_mapping_json)
+    class_mapping = {int(key): value for key, value in class_mapping.items()}
+
     if request.method == 'POST':
         image_data_uri = request.POST.get("src")
 
@@ -570,25 +625,24 @@ def cam_recognition(request):
             test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
             # Load model
-            model = tf.keras.models.load_model(os.getcwd() + '/model.h5')
+            model = tf.keras.models.load_model('best_model.h5')
             result = model.predict(test_image)
-
-            # Define class mapping
-            class_mapping = {
-                0: "Adelfa",
-                1: "ALOE VERA",
-                2: "sambong",
-                # Add more classes here if needed
-            }
 
             predicted_class_index = np.argmax(result)
             predicted_class_probability = result[0][predicted_class_index]
             # Set a threshold for class probability
 
-            confidence_threshold = 80  # Adjust this threshold as needed
+            confidence_threshold = 0.1  # Adjust this threshold as needed
 
             # Check if any class probability exceeds the threshold
             print('probability' + str(predicted_class_probability))
+
+            top_3_probabilities = {class_mapping[i]: result[0][i]  * 100 for i in range(len(class_mapping))}
+            # Sort the dictionary by values in descending order
+            sorted_probabilities = sorted(top_3_probabilities.items(), key=lambda x: x[1], reverse=True)
+            # Take only the top 3 entries
+            class_probabilities = sorted_probabilities[:3]
+
             if predicted_class_probability < confidence_threshold:
                 predicted_class_name = "Unknown"
             else:
@@ -599,7 +653,13 @@ def cam_recognition(request):
 
             print( 'index' + str(predicted_class_index))
 
-            return render(request, "cam-recognition.html", {"prediction": predicted_class_name, 'probability': predicted_class_probability})
+            context = {
+                'class_probabilities': class_probabilities,
+                'prediction': predicted_class_name,
+                'probability': predicted_class_probability,
+            }
+
+            return render(request, "cam-recognition.html", context)
 
         except Exception as e:
             # Handle errors gracefully
@@ -611,7 +671,7 @@ def cam_recognition(request):
 def map_endpoint(request):
     herbs = Herb.objects.all()
     stores = Store.objects.all()
-
+    mapherbs = MapHerb.objects.all()
     # Create a map
     m = folium.Map(location=[6.918658, 122.077802], zoom_start=13, control_scale=True, max_zoom=20, min_zoom=2, max_bounds=True)
 
@@ -647,7 +707,592 @@ def map_endpoint(request):
                 popup=popup,
             ).add_to(m)
 
+        for herbb in mapherbs:
+            lat = herbb.lat
+            long = herbb.long
+            name = herbb.herb
+
+        if lat is not None and long is not None:
+            popup = folium.Popup(name)
+            folium.CircleMarker(
+                location=[lat, long],
+                radius=20,
+                color='yellow',
+                fill=True,
+                fill_color='yellow',
+                fill_opacity=0.1,
+                popup=popup,
+            ).add_to(m)
+
     # Get the map HTML
     map_html = m._repr_html_()
 
     return HttpResponse(map_html)
+
+
+# --------------------------------------------------------->
+# ADMIN
+# --------------------------------------------------------------------------------->
+def herb_upload_stats(request):
+    # Get the start of the current hour
+    start_of_hour = timezone.now().replace(minute=0, second=0, microsecond=0)
+
+    # Query to get the count of uploads per hour
+    hourly_stats = MapHerb.objects.filter(timestamp__gte=start_of_hour) \
+                                  .annotate(hour=TruncHour('timestamp')) \
+                                  .values('hour') \
+                                  .annotate(uploads_count=Count('id'))
+
+    # Convert QuerySet to a list of dictionaries
+    hourly_stats_list = list(hourly_stats)
+
+    # Return JsonResponse
+    return JsonResponse(hourly_stats_list, safe=False)
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def admin_home(request):
+    json_file_path = 'training_history.json'
+
+    try:
+        with open(json_file_path, 'r') as file:
+            training_history_data = json.load(file)
+    except FileNotFoundError:
+        training_history_data = None
+
+    herbs = Herb.objects.all()
+    recent_herb = Herb.objects.latest('timestamp')
+    most_liked_herb = Herb.objects.annotate(like_count=Count('favorites')).order_by('-like_count').first()
+    # Most commented herb
+    most_commented_herb = Herb.objects.annotate(comment_count=Count('testimonials')).order_by('-comment_count').first()
+    # Calculate the start of the week (Sunday)
+    start_of_week = timezone.now() - timezone.timedelta(days=timezone.now().weekday() + 1)
+
+    # Query to get the count of uploads per week
+    weekly_stats = MapHerb.objects.filter(timestamp__gte=start_of_week) \
+                                .annotate(week=TruncWeek('timestamp')) \
+                                .values('week') \
+                                .annotate(uploads_count=Count('id'))
+
+    start_of_day = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    # Query to get the count of uploads per day
+    daily_stats = MapHerb.objects.filter(timestamp__gte=start_of_day) \
+                                  .annotate(day=TruncDate('timestamp', output_field=DateField())) \
+                                  .values('day', 'uploader__username') \
+                                  .annotate(uploads_count=Count('id'))
+
+    # Convert QuerySet to a list of dictionaries
+    daily_stats_list = list(daily_stats)
+
+    context = {
+        'herbs':herbs,
+        'most_liked_herb':most_liked_herb,
+        'most_commented_herb':most_commented_herb,
+        'recent_herb':recent_herb,
+        'weekly_stats':weekly_stats,
+        'daily_stats_list':daily_stats_list,
+        'json_file_path':json_file_path,
+        'training_history_data': training_history_data,
+    }
+
+    return render(request, 'Admin/index.html', context )
+
+
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def dash_herb_user(request):
+    mapherbs = MapHerb.objects.all()
+    User = get_user_model()
+
+    top_contributor = User.objects.annotate(num_uploads=Count('mapherb')).order_by('-num_uploads').first()
+    
+    users = User.objects.all().order_by('-is_staff')
+    # Get a QuerySet of all session objects
+    sessions = Session.objects.filter(expire_date__gte=timezone.now())
+    # Create a dictionary to hold the last activity time for each user
+    logged_in_user_ids = set()
+        # Loop over the sessions and add the user ID to the set
+    for session in sessions:
+        data = session.get_decoded()
+        user_id = data.get('_auth_user_id')
+        if user_id:
+            logged_in_user_ids.add(user_id)
+    # Count the number of unique user IDs in the set
+    num_logged_in_users = len(logged_in_user_ids)
+    inactive_users_count = len(users) - num_logged_in_users
+    user_activity = {}
+    # Loop over the sessions and update the last activity time for each user
+    for session in sessions:
+        data = session.get_decoded()
+        user_id = data.get('_auth_user_id')
+        if user_id:
+            user_activity[user_id] = session.expire_date - datetime.now(timezone.utc)
+    # Loop over the users and update their active status
+    for user in users:
+        last_activity = user_activity.get(str(user.id), None)
+        if last_activity:
+            # User has an active session
+            active_status = 'Logged In'
+        else:
+            # User does not have an active session
+            active_status = 'Logged Off'
+        # Update the active status for the user
+        user.active_status = active_status
+    # Create a list of user dictionaries to hold the user data
+    user_data_list = []
+    # Loop over the users and add their data to the user data list
+    for user in users:
+        user_data = {
+            'user': user,
+            'active_status': user.active_status
+        }
+        user_data_list.append(user_data)
+
+    context = {
+        'mapherbs':mapherbs,
+        'user_data_list':user_data_list,
+        'top_contributor':top_contributor,
+        'num_logged_in_users': num_logged_in_users,
+        'inactive_users_count':inactive_users_count,
+
+    }
+
+    return render(request,  'Admin/Users.html', context)
+
+@staff_member_required(login_url='login_or_register')
+def deleteuser(request, id):
+    user = get_object_or_404(User, id=id)
+    try:
+        user.delete()
+        messages.success(request, 'User deleted successfully')
+    except Exception as e:
+        messages.error(request, f'Error deleting User: {str(e)}')
+    return redirect('/dashboard')
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def herbal_upload(request):
+    herbs = Herb.objects.all()
+
+    context = {
+        'herbs': herbs
+    }
+
+    return render(request, 'Admin/herbal-uploads.html', context)
+
+from django.views.decorators.csrf import csrf_exempt
+
+def download_processed_data(request):
+    media_root = settings.MEDIA_ROOT
+    herbs_path = os.path.join(media_root, "herbs.npy")
+    labels_path = os.path.join(media_root, "labels.npy")
+
+    # Create a zip file to download multiple files
+    response = HttpResponse(content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=processed_data.zip'
+
+    with ZipFile(response, 'w') as zip_file:
+        zip_file.write(herbs_path, 'herbs.npy')
+        zip_file.write(labels_path, 'labels.npy')
+
+    return response
+
+@csrf_exempt
+@staff_member_required(login_url='login_or_register')
+def process_images(request):
+
+    media_root = settings.MEDIA_ROOT
+    root_directory = os.path.join(media_root, "Datasets")
+
+    try:
+        data = []
+        labels = []
+
+        subdirectories = [d for d in os.listdir(root_directory) if os.path.isdir(os.path.join(root_directory, d))]
+
+        for label, subdirectory in enumerate(subdirectories):
+            subdirectory_path = os.path.join(root_directory, subdirectory)
+            image_files = os.listdir(subdirectory_path)
+
+            class_mapping = {}
+            for i, subdirectory in enumerate(subdirectories):
+                class_mapping[i] = subdirectory    
+
+            class_mapping_json = json.dumps(class_mapping, indent=4)
+            with open('class_mapping.json', 'w') as file:
+                file.write(class_mapping_json)
+
+            for image_file in image_files:
+                image_path = os.path.join(subdirectory_path, image_file)
+                imag = cv2.imread(image_path)
+                img_from_ar = Image.fromarray(imag, 'RGB')
+                resized_image = img_from_ar.resize((224, 224))
+                data.append(np.array(resized_image))
+                labels.append(label)
+
+        herbs = np.array(data)
+        labels = np.array(labels)
+        
+        # Save the processed data and labels
+        np.save(os.path.join(media_root, "herbs.npy"), herbs)
+        np.save(os.path.join(media_root, "labels.npy"), labels)
+
+        return JsonResponse({'status': 'success', 'message': 'Images processed successfully.'})
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def dataset_upload(request):
+    warning_message = None
+    class_name = None
+    images = None
+    
+    datasets = Datasets.objects.order_by('class_name')
+    
+    try:
+        if request.method == 'POST':
+            class_name = request.POST.get('class_name')
+            images = request.FILES.getlist('images')
+
+            if not images:
+                print('redirect')
+                warning_message = {'message':'Please Add Images'}
+                return JsonResponse(warning_message)
+            else:
+                if class_name and images is not None:
+                    # print('passed')# print(images)# print(class_name)
+                    # class_folder = os.path.join(settings.MEDIA_ROOT, class_name)
+                    # os.makedirs(class_folder, exist_ok=True)
+                    dataset_instance = Datasets(class_name=class_name)
+                    dataset_instance.save()
+                 
+                    for i, image in enumerate(images):
+                        try:
+                            dataset_instance_images = DatasetImages(class_name=dataset_instance, images=image)
+                            dataset_instance_images.save()
+                        except DuplicateImageError as e:
+                            # Handle the duplicate image error, you can redirect or render an error message
+                            warning_message = {'message':str(e)}
+                            # dataset_instance.delete()
+                            return JsonResponse(warning_message)
+                        
+                    
+                    print("Preparation  Success")
+                    response_data = {'progress': 100, 'message': 'Upload complete'}
+                    return JsonResponse(response_data)
+        
+    except Exception as e:
+        print(f"Error during dataset upload: {str(e)}")
+
+    return render(request, 'Admin/dataset-upload.html', {'progress_percentage': 0, 'datasets':datasets})
+
+@staff_member_required(login_url='login_or_register')
+def delete_dataset(request, id):
+    com = get_object_or_404(Datasets, id=id)
+
+    # Delete associated images
+    for image in com.images.all():
+        try:
+            # Delete the image file from storage
+            default_storage.delete(image.images.path)
+        except ValueError:
+            # Handle the case where image.images.path is None
+            pass
+
+        # Delete the DatasetImages object
+        image.delete()
+
+    # Clear the many-to-many relationship to avoid IntegrityError
+    com.images.clear()
+
+    # Delete the Datasets object
+    com.delete()
+
+    return redirect(request.META['HTTP_REFERER'])
+
+from .Model_Training import train_model
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def model_training(request):
+
+    try:
+        if request.method == 'POST':
+            label_file = request.FILES.get('label')
+            herb_file = request.FILES.get('herb')
+
+        if not label_file or not herb_file:
+            # Handle the case where files are missing
+            response_data = {'message': 'Please Upload Both Files'}
+            return JsonResponse(response_data)
+
+        train_model(herb_file, label_file)
+
+        response_data = {'message': 'Training Completed'}
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+    return render(request, 'Admin/model-training.html')
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def model_upload(request):
+    json_file_path = 'training_history.json'
+
+    try:
+        with open(json_file_path, 'r') as file:
+            training_history_data = json.load(file)
+    except FileNotFoundError:
+        training_history_data = None    
+    try:
+        if request.method == 'POST':
+            model_file = request.FILES.get('model')
+            train_accu = request.POST.get('training_accuracy')
+            val_accu = request.POST.get('validation_accuracy')
+            val_loss = request.POST.get('validation_loss')
+            num_classes = request.POST.get('classes')
+            data_length = request.POST.get('class_length')
+
+            # Validate if model file is provided
+        if not model_file:
+            return JsonResponse({'message': 'Model file is required.'})
+
+            # Validate numeric values
+        try:
+            train_accu = float(train_accu)
+            val_accu = float(val_accu)
+            val_loss = float(val_loss)
+            num_classes = int(num_classes)
+            data_length = int(data_length)
+        except (TypeError, ValueError):
+            return JsonResponse({'message': 'Invalid numeric value provided.'})
+        
+
+        temp_model_path = f'tmp_model_{model_file.name}'
+            # Save the uploaded model temporarily
+        with open(temp_model_path, 'wb') as temp_model_file:
+                for chunk in model_file.chunks():
+                    temp_model_file.write(chunk)
+            # Load the model directly from the temporary path
+        model = tf.keras.models.load_model(temp_model_path)
+            # Save the loaded model as an HDF5 file
+        model.save('best_model.h5')
+            # Remove the temporary model file
+        os.remove(temp_model_path)
+
+        data = {
+            'training_accuracy': train_accu,
+            'validation_accuracy': val_accu,
+            'validation_loss': val_loss,
+            'num_classes': num_classes,
+            'data_length': data_length,
+        }
+
+        with open('training_history.json', 'w') as json_file:
+                json.dump(data, json_file)
+
+        response_data = {'progress': 100, 'message': 'Upload Completed'}
+        return JsonResponse(response_data)
+        
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+    return render(request, 'Admin/model-upload.html', {'training_history_data':training_history_data})
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def user_herbal_comments(request):
+    User = get_user_model()
+    users = User.objects.all()
+    comments = Testimonials.objects.all()
+
+    # Read the profanity list from a JSON file
+    with open('DirtyWords.json', 'r', encoding='utf-8') as jsonfile:
+        profanity_data = json.load(jsonfile)
+
+    # Extract the list of words from the JSON data
+    profanity_list = [record["word"].strip() for record in profanity_data.get("RECORDS", [])]
+
+    for comment in comments:
+        comment_text = comment.comment.lower()  # Convert to lowercase for case-insensitive comparison
+
+        # Check if the comment contains any profanity
+        if any(word in comment_text for word in profanity_list):
+            # Handle the profanity, for example, mark the comment as inappropriate
+            comment.is_inappropriate = True
+            comment.save()
+
+    context = {
+        'users': users,
+        'comments': comments,
+        'profanity_list': profanity_list,
+    }
+
+    return render(request, 'Admin/user-herbal-comments.html', context)
+
+class edit_user_upload(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = MapHerb
+    fields = '__all__'
+    success_url = reverse_lazy('interactive_map')
+    template_name = 'herb-cms.html'
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+    
+    def post(self, request, *args, **kwargs):
+        # Get the existing object
+        self.object = self.get_object()
+
+        # Delete previous image if it exists
+        previous_image = self.object.image
+        if previous_image:
+            default_storage.delete(previous_image.path)
+
+        return super().post(request, *args, **kwargs)
+    
+@staff_member_required(login_url='login_or_register')
+def delete_user_upload(request, id):
+    com = get_object_or_404(MapHerb, id=id)
+
+    image_path = com.image.path
+
+    # Delete the Herb object
+    com.delete()
+
+    # Delete the image file from storage
+    default_storage.delete(image_path)
+
+    return redirect(request.META['HTTP_REFERER'])
+
+class edit_store(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Store
+    fields = '__all__'
+    success_url = reverse_lazy('interactive_map')
+    template_name = 'herb-cms.html'
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+    
+    def post(self, request, *args, **kwargs):
+        # Get the existing object
+        self.object = self.get_object()
+
+        return super().post(request, *args, **kwargs)
+    
+@staff_member_required(login_url='login_or_register')
+def delete_store(request, id):
+    com = get_object_or_404(Store, id=id)
+
+    com.delete()
+
+    return redirect(request.META['HTTP_REFERER'])
+
+@staff_member_required(login_url='/login_or_register')
+def add_store(request):
+
+    form = HerbStore()
+    if request.method == 'POST':
+        form = HerbStore(request.POST, request.FILES)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.save()
+            return redirect('interactive_map')
+        
+    return render(request, 'herb-cms.html', {'form':form})
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def interactive_map(request):
+    
+    herbs = Herb.objects.all()
+    stores = Store.objects.all()
+    user_uploads = MapHerb.objects.all()
+
+    combined_list = []
+
+    for herb in herbs:
+        combined_list.append({'id': herb.id, 'type': 'herb', 'name': herb.name, 'lat': herb.lat, 'long': herb.long})
+
+    for store in stores:
+        combined_list.append({'id': store.id,'type': 'store', 'name': store.name, 'lat': store.lat, 'long': store.long})
+
+    for upload in user_uploads:
+        combined_list.append({'id': upload.id,'type': 'upload', 'name': upload.herb, 'lat': upload.lat, 'long': upload.long})
+
+    totals = {
+        'herb': len([entry for entry in combined_list if entry['type'] == 'herb']),
+        'store': len([entry for entry in combined_list if entry['type'] == 'store']),
+        'upload': len([entry for entry in combined_list if entry['type'] == 'upload']),
+    }
+
+    context = {
+        'combined_list':combined_list,
+        'totals':totals,
+    }
+
+    return render(request, 'Admin/interactive-map.html', context)
+
+@staff_member_required(login_url=reverse_lazy('login_or_register'))
+def user_map_comments(request):
+    User = get_user_model()
+    users = User.objects.all()
+
+    mapcomment = MapComment.objects.all()
+
+    with open('DirtyWords.json', 'r', encoding='utf-8') as jsonfile:
+        profanity_data = json.load(jsonfile)
+
+    # Extract the list of words from the JSON data
+    profanity_list = [record["word"].strip() for record in profanity_data.get("RECORDS", [])]
+
+    for comment in mapcomment:
+        comment_text = comment.comment.lower()  # Convert to lowercase for case-insensitive comparison
+
+        # Check if the comment contains any profanity
+        if any(word in comment_text for word in profanity_list):
+            # Handle the profanity, for example, mark the comment as inappropriate
+            comment.is_inappropriate = True
+            comment.save()
+
+    context = {
+        'users':users,
+        'mapcomment':mapcomment
+    }
+
+    return render(request, 'Admin/user-map-comments.html', context)
+
+class edit_map_comments(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = MapComment
+    fields = '__all__'
+    success_url = reverse_lazy('user_map_comments')
+    template_name = 'herb-cms.html'
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+    
+    def post(self, request, *args, **kwargs):
+        # Get the existing object
+        self.object = self.get_object()
+
+        return super().post(request, *args, **kwargs)
+    
+@staff_member_required(login_url='login_or_register')
+def delete_map_comments(request, id):
+    com = get_object_or_404(MapComment, id=id)
+
+    com.delete()
+
+    return redirect(request.META['HTTP_REFERER'])
+
+def training_history(request):
+    # Assuming 'training_history.json' is in the root of your static files directory
+    json_file_path = 'training_history.json'
+
+    try:
+        with open(json_file_path, 'r') as file:
+            training_history_data = json.load(file)
+    except FileNotFoundError:
+        return JsonResponse({'error': 'File not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON format in the file'}, status=500)
+
+    return JsonResponse(training_history_data)

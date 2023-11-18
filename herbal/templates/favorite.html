@@ -1,7 +1,101 @@
 {%extends 'core/base.html'%}
 {% load static %}
 {% block content%}
-<div class="main">
+<main class="py-5 barista-section section-padding section-bg">
+
+  <div class="album bg-body-tertiary py-5">
+    <div class="container">
+      <h1 class="text-center">FAVOURITES</h1>
+      <hr>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        {% for fav in favorite_herbs %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" width="100%" height="225" src="{{fav.image.url}}" role="img" style="object-fit: cover;"></img>
+            <div class="card-body dark-color">
+              <p class="card-text dark-color">{{fav.name}} - {{fav.scientific_name}}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group dark-color">
+                  <form method="get" action="{% url 'search' %}" autocomplete="off">
+                    <input name="query" type="text" placeholder="Find Your Herb {{fav.name}}" value="{{fav.name}}" style="display: none;">
+                    <button type="submit" class="btn btn-sm btn-outline-success dark-color">View Herb</button>
+                  </form> 
+                </div>
+                <small class="text-body-secondary">{{fav.timestamp|date:"m, d, Y"}}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <section class="py-3 text-center container">
+    <div class="row">
+      <h1>UPLOADS</h1>
+      <hr>
+      <div class="col-lg-10 col-md-8 mx-auto">
+        <div class="table-responsive">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th scope="col">Title</th>
+                      <th scope="col">Latitude</th>
+                      <th scope="col">Longitude</th>
+                      <th scope="col">Timestamp</th>
+                      <th scope="col">Image Attachment</th>
+                      <th scope="col">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for upload in uploads %}
+                  <tr>
+                      <th scope="row">{{ upload.herb }}</th>
+                      <td>{{ upload.lat }}</td>
+                      <td>{{ upload.long }}</td>
+                      <td>{{ upload.timestamp }}</td>
+                      <td><a href="{{ upload.image.url }}">{{ upload.image.url }}</a></td>
+                      <td><a href="{% url 'user_edit_upload' upload.id %}"><button type="button" class="btn btn-light">Edit</button></a></td>
+                  </tr>
+                  {% endfor %}
+              </tbody>
+          </table>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- <section class="py-3 text-center container">
+    <div class="row">
+      <h1>COMMENTS</h1>
+      <hr>
+      <div class="col-lg-10 col-md-8 mx-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Handle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Mark</td>
+              <td>Otto</td>
+              <td><button type="button" class="btn btn-light">Light</button></td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section> -->
+</main>
+
+<!-- <div class="main">
   {% if favorite_herbs %}
   <h1>Favourites</h1>
   {% else %}
@@ -21,11 +115,11 @@
     </li>
     {% endfor %}
   </ul>
-</div>
+</div> -->
 
 <!-- <h3 class="made_by">Made with ♡</h3> -->
 
-<style>
+<!-- <style>
   /* Font */
 @import url('https://fonts.googleapis.com/css?family=Quicksand:400,700');
 
@@ -130,7 +224,7 @@ img {
   margin-top: 35px;
   text-align: center;
 }
-</style>
+</style> -->
 {% endblock %}
 <!-- {% for favorite in user.favorite_set.all %}
     {{ favorite.herb.name }}
