@@ -544,7 +544,7 @@ def recognition(request):
         # Read the image
         imag = cv2.imread(path)
         img_from_ar = Image.fromarray(imag, 'RGB')
-        resized_image = img_from_ar.resize((224, 224))
+        resized_image = img_from_ar.resize((299, 299))
 
         test_image = np.expand_dims(resized_image, axis=0)
         test_image = test_image.astype('float32') / 255.0  # Normalize the image
@@ -923,7 +923,12 @@ def process_images(request):
 
             for image_file in image_files:
                 image_path = os.path.join(subdirectory_path, image_file)
+                # Check if the image is readable
                 imag = cv2.imread(image_path)
+                if imag is None:
+                    print(f"Skipping unreadable image: {image_path}")
+                    continue
+                
                 img_from_ar = Image.fromarray(imag, 'RGB')
                 resized_image = img_from_ar.resize((224, 224))
                 data.append(np.array(resized_image))
@@ -974,7 +979,8 @@ def dataset_upload(request):
                         except DuplicateImageError as e:
                             # Handle the duplicate image error, you can redirect or render an error message
                             warning_message = {'message':str(e)}
-                            # dataset_instance.delete()
+                            dataset_instance.delete()
+                            # dataset_instance_images.delete()
                             return JsonResponse(warning_message)
                         
                     

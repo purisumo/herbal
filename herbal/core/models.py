@@ -6,6 +6,7 @@ from django.db import models
 from django.core.files.storage import default_storage
 from registration.models import User
 import re
+from django.utils import timezone
 
 class DuplicateImageError(Exception):
     pass
@@ -126,10 +127,11 @@ class DatasetImages(models.Model):
         )
 
         if existing_images.exists():
-            raise DuplicateImageError("Duplicate image detected")
+            timestamp = timezone.now().strftime('%Y%m%d%H%M%S')
+            new_filename = f"{sanitized_filename}_{timestamp}"
 
-        # Update the image path with the sanitized filename
-        self.images.name = os.path.join(class_name_folder, sanitized_filename)
+            # Update the image path with the sanitized filename
+            self.images.name = os.path.join(class_name_folder, new_filename)
 
         super().save(*args, **kwargs)
 
