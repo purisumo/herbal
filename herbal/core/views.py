@@ -115,20 +115,25 @@ def herbs(request):
     form = TestimonialsForm()
 
     if request.method == 'POST':
-        form = TestimonialsForm(request.POST)
-        if form.is_valid():
-            testimonial = form.save(commit=False)
-            testimonial.name = request.user
-            # Get the Herb instance associated with the comment
-            herb_instance = form.cleaned_data['herb']
-            herb_id = herb_instance.id
-            testimonial.herb = herb_instance
-            testimonial.save()
-            print('Data saved successfully')
-            return redirect(request.path + '?submitted=true')
+        # Check if the user is authenticated
+        if request.user.is_authenticated:
+            form = TestimonialsForm(request.POST)
+            if form.is_valid():
+                testimonial = form.save(commit=False)
+                testimonial.name = request.user
+                # Get the Herb instance associated with the comment
+                herb_instance = form.cleaned_data['herb']
+                herb_id = herb_instance.id
+                testimonial.herb = herb_instance
+                testimonial.save()
+                print('Data saved successfully')
+                return redirect(request.path + '?submitted=true')
+            else:
+                print('Form is not valid')  # Add this line for debugging
+                print(form.errors)  # Add this line for debugging
         else:
-            print('Form is not valid')  # Add this line for debugging
-            print(form.errors)  # Add this line for debugging
+            print('User is not authenticated')  # Add this line for debugging
+            return redirect( 'login_or_register' )
 
 
     # print(suggested_similarities)
@@ -169,7 +174,9 @@ def update_user_data(request):
                 uploader = request.user
                 existing_entries = MapHerb.objects.filter(uploader=uploader)
                 
-                if existing_entries.exists():
+                MAX_UPLOADS = 3
+
+                if existing_entries.count() >= MAX_UPLOADS:
                     return JsonResponse({'error': 'User has already uploaded an entry'})
                 else:
                     # Store or update the user's location and form data in your Django models
@@ -296,19 +303,22 @@ def herbal_map_inter(request, id=None, herb=None):
 
     form = MapCommentForm()
     if request.method == 'POST':
-        form = MapCommentForm(request.POST)
-        if form.is_valid():
-            print('Form is valid')  # Add this line for debugging
-            mherb = form.save(commit=False)
-            mherb.username = request.user
-            mherb.map_herb = mapherb
-            mherb.save()
-            print('Data saved successfully')  # Add this line for debugging
-            return redirect(request.path + '?submitted=true')
+        if request.user.is_authenticated:
+            form = MapCommentForm(request.POST)
+            if form.is_valid():
+                print('Form is valid')  # Add this line for debugging
+                mherb = form.save(commit=False)
+                mherb.username = request.user
+                mherb.map_herb = mapherb
+                mherb.save()
+                print('Data saved successfully')  # Add this line for debugging
+                return redirect(request.path + '?submitted=true')
+            else:
+                print('Form is not valid')  # Add this line for debugging
+                print(form.errors)  # Add this line for debugging
         else:
-            print('Form is not valid')  # Add this line for debugging
-            print(form.errors)  # Add this line for debugging
-
+            return redirect('login_or_register')
+        
     # Create a map
     if herbb and herbb.lat is not None and herbb.long is not None:
         m = folium.Map(location=[herbb.lat, herbb.long], zoom_start=16, control_scale=True, max_zoom=20, min_zoom=2, max_bounds=True)

@@ -68,8 +68,9 @@
                         <div class="Input">
                             <form method="POST" name="inputForm" enctype='multipart/form-data'>
                                 {% csrf_token %}
+                                <button id="toggleCamera" type="button" class="btn btn-warning mb-2">Toggle Camera</button>
                                 <div class="camera">
-                                    <button id="toggleCamera" type="button" class="btn btn-warning mb-2">Toggle Camera</button>
+                                    
                                     <video id="video">Video stream not available.</video>
                                     <button id="startbutton" type="button" class="custom-btn btn-2">Take photo</button>
                                     <input id="webimg" value="" name="src" type="text" style="display: none;">

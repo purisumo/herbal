@@ -19,7 +19,8 @@
                   <form method="get" action="{% url 'search' %}" autocomplete="off">
                     <input name="query" type="text" placeholder="Find Your Herb {{fav.name}}" value="{{fav.name}}" style="display: none;">
                     <button type="submit" class="btn btn-sm btn-outline-success dark-color">View Herb</button>
-                  </form> 
+                  </form>
+                  <a onclick="return confirm('Press OK to Continue Removing')" href="{% url 'toggle_favorite' fav.id %}"><button type="submit" class="btn btn-sm btn-outline-warning dark-color ms-2">Remove</button></a> 
                 </div>
                 <small class="text-body-secondary">{{fav.timestamp|date:"m, d, Y"}}</small>
               </div>
@@ -56,7 +57,10 @@
                       <td>{{ upload.long }}</td>
                       <td>{{ upload.timestamp }}</td>
                       <td><a href="{{ upload.image.url }}">{{ upload.image.url }}</a></td>
-                      <td><a href="{% url 'user_edit_upload' upload.id %}"><button type="button" class="btn btn-light">Edit</button></a></td>
+                      <td>
+                        <a href="{% url 'user_edit_upload' upload.id %}"><button type="button" class="btn btn-sm btn-success">Edit</button></a>
+                        <a onclick="return confirm('Press OK to Continue Deleting')" href="{% url 'delete_user_upload' upload.id %}" class=" mt-2"><button type="button" class="btn btn-sm btn-danger">Delete</button></a>
+                      </td>
                   </tr>
                   {% endfor %}
               </tbody>
