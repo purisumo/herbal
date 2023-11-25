@@ -4,3 +4,4 @@ CNN/data/
 CNN/excl
 *.npy
 herbal/media/Datasets
+herbal/staticfiles

@@ -124,6 +124,7 @@
                             {% endfor %}
                         </td>
                     </tr>
+                    {% if prediction %}
                     <tr>
                       <th colspan="3" scope="row" class="text-light text-center">
                         <form method="get" action="{% url 'search' %}" autocomplete="off">
@@ -132,6 +133,7 @@
                         </form>
                       </th>
                     </tr>
+                    {% endif %}
                 </tbody>
               </table>
             <div class="status">

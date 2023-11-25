@@ -4,6 +4,7 @@ from django.db import models
 
 class User(AbstractUser):
     mobile = models.IntegerField(null=True, blank=True)
-
+    is_email_verified = models.BooleanField(default=False)
+    
     def __str__(self):
         return self.username

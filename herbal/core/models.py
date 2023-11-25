@@ -142,3 +142,16 @@ class MachineModel(models.Model):
 
     def __str__(self):
         return f"MachineModel - Herb: {self.herb.name}, Label: {self.label.name}"
+    
+
+class HerbalistProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    fname = models.CharField(max_length=255)
+    minitial = models.CharField(max_length=255)
+    lname = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='experts/')
+    profession = models.TextField(max_length=255)
+    detail = models.TextField(max_length=255)
+
+    def __str__(self):
+        return self.user.username

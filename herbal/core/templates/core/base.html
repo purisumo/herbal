@@ -29,14 +29,15 @@
         <link href="/static/css/search.css" rel="stylesheet">
 
         <link href="/static/css/nav.css" rel="stylesheet">
-        
+
+        <link rel="stylesheet" href="/static/css/loading-anim.css">
 
 
     </head>
     
     <body>
-        
-            <main>
+            <div id="loading-anim" class="loader-animation"></div>
+            <main id="content-anim" style="display: none;">
               
             {% include 'core/nav.html' %}
             {% block content %}
@@ -45,7 +46,7 @@
             {% include 'core/footer.html' %}
             
             </main> 
-
+        <script src="/static/js/loading-anim.js"></script>    
         <!-- JAVASCRIPT FILES -->
         <script src="/static/js/jquery.min.js"></script>
         <script src="/static/js/bootstrap.min.js"></script>

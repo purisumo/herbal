@@ -1,6 +1,10 @@
 {% extends 'core/base.html' %}
 {% load static %}
 {% block content%}
+
+<div >
+
+
                 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
 
                     <div class="container">
@@ -76,7 +80,7 @@
                         <div class="row justify-content-center">
 
                             <a href="{% url 'herbs' %}" class="col-lg-12 col-12 text-center mb-4 pb-lg-2 smoothscroll">
-                                <em class=" btn custom-btn custom-border-btn">View More</em>
+                                <em class=" btn custom-btn custom-border-btn">See More</em>
                                 <h2 class="text-white">Herbal Plants</h2>
                             </a>
                             {% for herb in herbs|slice:":4" %}
@@ -89,7 +93,7 @@
                                             <p class="badge ms-4"><em>{{herb.scientific_name}}</em></p>
                                         </div>
 
-                                        <p class="text-white mb-0">  {{herb.description|slice:':60'}}</p>
+                                        <p class="text-white mb-0">  {{herb.description|slice:':30'}}...</p>
                                     </div>
 
                                     <div class="team-block-image-wrap">
@@ -451,4 +455,5 @@
 
 
 </script>
+</div>
 {% endblock %}

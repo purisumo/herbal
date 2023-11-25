@@ -239,7 +239,14 @@
                         {% for user_data in user_data_list %}
                       <tr>
                         <td> <strong>{{ user_data.user.username|title }}</strong></td>
-                        <th>{{user_data.user.email}}</th>
+                        <th>
+                          {{user_data.user.email}} <br>
+                          {% if user_data.user.is_email_verified == True %}
+                          <span class="badge bg-label-success me-1">Verified</span>
+                          {% else %}
+                          <span class="badge bg-label-warning me-1">Not Verified</span>
+                          {% endif %}
+                        </th>
                         <td>{{user_data.user.mapherb.count}}</td>
                         <td>{{user_data.user.testimony.count}}</td>
                         <td>{{user_data.user.mapcomment.count}}</td>
@@ -254,9 +261,15 @@
                               <i class="bx bx-dots-vertical-rounded"></i>
                             </button>
                             <div class="dropdown-menu">
-                              <!-- <a class="dropdown-item" href="javascript:void(0);"
-                                ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                              > -->
+                              <a class="dropdown-item" href="{% url 'toggle_user_activation' user_data.user.id %}"
+                                ><i class="bx bx-edit-alt me-1"></i>
+                                {% if user_data.user.is_email_verified == True %}
+                                Deactivate User
+                                {% else %}
+                                Activate User
+                                {% endif %}
+                                </a
+                              >
                               <a onclick="return confirm('WARNING!! Press OK to continue DELETING')" class="dropdown-item" href="{% url 'deleteuser' user_data.user.id %}"
                                 ><i class="bx bx-trash me-1"></i> Delete</a
                               >

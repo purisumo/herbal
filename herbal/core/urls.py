@@ -9,6 +9,7 @@ urlpatterns = [
 
     path('dashboard/herb_user', views.dash_herb_user, name='dash_herb_user'),
     path('dashboard/deleteuser/<int:id>', views.deleteuser, name='deleteuser'),
+    path('toggle_user_activation/<int:user_id>/', views.toggle_user_activation, name='toggle_user_activation'),
 
     path('dashboard/herbal_upload', views.herbal_upload, name='herbal_upload'),
 

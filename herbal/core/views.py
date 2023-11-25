@@ -879,6 +879,19 @@ def deleteuser(request, id):
         messages.error(request, f'Error deleting User: {str(e)}')
     return redirect('/dashboard')
 
+def toggle_user_activation(request, user_id):
+    # Retrieve the user from the database
+    user = get_object_or_404(User, id=user_id)
+
+    # Toggle the 'is_active' attribute
+    user.is_email_verified = not user.is_email_verified
+
+    # Save the changes
+    user.save()
+
+    # Redirect back to the user detail page or any other page as needed
+    return redirect('dash_herb_user')
+
 @staff_member_required(login_url=reverse_lazy('login_or_register'))
 def herbal_upload(request):
     herbs = Herb.objects.all()
