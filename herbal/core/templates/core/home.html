@@ -97,7 +97,11 @@
                                     </div>
 
                                     <div class="team-block-image-wrap">
-                                        <img src="{{ herb.image.url }}" class="team-block-image img-fluid" alt="">
+                                    {% if herb.herbimages_set.all %}
+                                        <img src="{{ herb.herbimages_set.first.images.url }}" class="team-block-image img-fluid" alt="">
+                                      {% else %}
+                                        <img src="" class="team-block-image img-fluid" alt="">
+                                      {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -285,7 +289,73 @@
                 </section> -->
 
 
-                <section class="reviews-section section-padding section-bg" id="section_4">
+                
+
+
+                <section class="contact-section section-padding" id="section_5">
+                    <div class="container">
+                        <div class="row">   
+
+                            <div class="col-lg-12 col-12">
+                                <em class="text-white">Curaherb</em>
+                                <h2 class="text-white mb-4 pb-lg-2">Interactive Herbal Map</h2>
+                            </div>
+
+                            <div class="col-lg-6 col-12">
+
+                                <p class="text-white">Integrated Herbal Map find herbs or herbal stores around you. With added functionalities, found a herb? share it, like and comment on other uploads as well</p>
+
+                                <p class="text-white"> Legend <img src="/static/image/legend.png" loading="lazy" style="max-width: 300px; max-height: 300px;"></p>
+
+                                
+                                <a href="{% url 'herbal-map' %}" class="smoothscroll btn custom-btn custom-border-btn mt-3 mb-4">See More</a>                               
+                            </div>
+
+                            <div class="col-lg-6 col-12 mx-auto mt-5 mt-lg-0 ps-lg-5" id="map-placeholder">
+                                <div class="d-flex justify-content-center">Loading Map </div>
+                                <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>
+                                    {% if map %}
+                                    {% endif %}
+                                </div>  
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+<script>
+  var mapLoaded = false;
+
+  window.addEventListener("scroll", function () {
+    var mapPlaceholder = document.getElementById("map-placeholder");
+    var rect = mapPlaceholder.getBoundingClientRect();
+    var scrollPosition = window.innerHeight;
+
+    if (rect.top <= scrollPosition && !mapLoaded) {
+      // Show the loading icon
+      mapPlaceholder.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/map/", true);  // Update the URL to match your Django endpoint URL
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var mapHtml = xhr.responseText;
+          mapPlaceholder.innerHTML = mapHtml;
+          mapLoaded = true;
+        }
+      };
+      xhr.send();
+
+      window.removeEventListener("scroll", arguments.callee);
+    }
+  });
+
+
+
+</script>
+</div>
+{% endblock %}
+
+<section class="reviews-section section-padding section-bg" id="section_4">
                     <div class="container">
                         <div class="row justify-content-center">
 
@@ -393,67 +463,3 @@
                         </div>
                     </div>
                 </section>
-
-
-                <section class="contact-section section-padding" id="section_5">
-                    <div class="container">
-                        <div class="row">   
-
-                            <div class="col-lg-12 col-12">
-                                <em class="text-white">Curaherb</em>
-                                <h2 class="text-white mb-4 pb-lg-2">Interactive Herbal Map</h2>
-                            </div>
-
-                            <div class="col-lg-6 col-12">
-
-                                <p class="text-white">Integrated Herbal Map find herbs or herbal stores around you. With added functionalities, found a herb? share it, like and comment on other uploads as well</p>
-
-                                <p class="text-white"> Legend <img src="/static/image/legend.png" loading="lazy" style="max-width: 300px; max-height: 300px;"></p>
-
-                                
-                                <a href="{% url 'herbal-map' %}" class="smoothscroll btn custom-btn custom-border-btn mt-3 mb-4">See More</a>                               
-                            </div>
-
-                            <div class="col-lg-6 col-12 mx-auto mt-5 mt-lg-0 ps-lg-5" id="map-placeholder">
-                                <div class="d-flex justify-content-center">Loading Map </div>
-                                <div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>
-                                    {% if map %}
-                                    {% endif %}
-                                </div>  
-                            </div>
-
-                        </div>
-                    </div>
-                </section>
-<script>
-  var mapLoaded = false;
-
-  window.addEventListener("scroll", function () {
-    var mapPlaceholder = document.getElementById("map-placeholder");
-    var rect = mapPlaceholder.getBoundingClientRect();
-    var scrollPosition = window.innerHeight;
-
-    if (rect.top <= scrollPosition && !mapLoaded) {
-      // Show the loading icon
-      mapPlaceholder.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
-
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "/map/", true);  // Update the URL to match your Django endpoint URL
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          var mapHtml = xhr.responseText;
-          mapPlaceholder.innerHTML = mapHtml;
-          mapLoaded = true;
-        }
-      };
-      xhr.send();
-
-      window.removeEventListener("scroll", arguments.callee);
-    }
-  });
-
-
-
-</script>
-</div>
-{% endblock %}

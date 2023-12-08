@@ -37,11 +37,14 @@ def login_or_register(request):
             password = request.POST['password']
             user = authenticate(username=username, password=password)
 
-            if user.is_superuser:
-                login(request, user)
-                return redirect('dashboard')
             
             if user is not None:
+                if user.is_superuser:
+                    login(request, user)
+                    return redirect('dashboard')
+                else:
+                    pass
+                
                 if not user.is_email_verified:
                     messages.error(request, 'Email not verified')
                     return render(request, 'registration/login_or_register.html')
@@ -57,26 +60,35 @@ def login_or_register(request):
             email = request.POST['email']
             password = request.POST['password']
             password2 = request.POST['password2']
+            
+            existing_user = User.objects.filter(email=email, is_email_verified=False).first()
+            if existing_user:
+                send_activation_email(existing_user, request)
+                messages.success(request, 'Check your email to validate your account')
+                return redirect('login_or_register')
+            
+            if password is not None and password != "":
+                if password == password2:
+                    if User.objects.filter(email=email).exists():
+                        messages.info(request, 'Email already used')
+                        return redirect('login_or_register')
+                    elif User.objects.filter(username=username).exists():
+                        messages.info(request, 'Username already used')
+                        return redirect('login_or_register')
+                    else:
+                        user = User.objects.create_user(username=username, email=email, password=password)
+                        user.save()
+                        send_activation_email(user, request)
 
-            if password == password2:
-                if User.objects.filter(email=email).exists():
-                    messages.info(request, 'Email already used')
-                    return redirect('login_or_register')
-                elif User.objects.filter(username=username).exists():
-                    messages.info(request, 'Username already used')
-                    return redirect('login_or_register')
+                        messages.success(request, 'Check your email to validate your account')
+                        # login(request, user)
+                        return redirect('login_or_register')
                 else:
-                    user = User.objects.create_user(username=username, email=email, password=password)
-                    user.save()
-                    send_activation_email(user, request)
-
-                    messages.success(request, 'Check your email to validate your account')
-                    # login(request, user)
+                    messages.info(request, 'Passwords do not match')
                     return redirect('login_or_register')
             else:
-                messages.info(request, 'Passwords do not match')
+                messages.info(request, 'Passwords is empty')
                 return redirect('login_or_register')
-
     return render(request, 'registration/login_or_register.html')
 
 # send_activation_email function
@@ -114,8 +126,10 @@ def activate_user(request, uid64, token):
         user.is_email_verified = True
         user.save()
 
+        login(request, user)  # Automatically log in the user after email verification
+
         messages.success(request, 'Email Verified')
-        return redirect('login_or_register')
+        return redirect('home')  # Redirect to the home page or any desired page after email verification
 
     return render(request, 'registration/activate-failed.html', {'user': user})
 

@@ -57,9 +57,9 @@
                         <div class="row justify-content-center">
 
                             <div class="col-lg-12 col-12 text-center mb-4 pb-lg-2">
-                                <em class="text-white">Department of Health (DOH) Approved</em>
+                                <!-- <em class="text-white">Department of Health (DOH) Approved</em> -->
 
-                                <h2 class="text-white">Herbal Plants</h2>
+                                <h2 class="text-white">HERBAL PLANTS</h2>
                             </div>
                                   {% if messages %}
                                   {% for message in messages %}
@@ -75,7 +75,7 @@
                                       <div class="modal-dialog modal-fullscreen">
                                         <div class="modal-content" style="background-color: #57ba98;">
                                           <div class="modal-header">
-                                            <!-- <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #f2f2f2;">{{herb.name}}</h1> -->
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #042807;">{{herb.name|upper}}</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <!-- <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
                                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -86,32 +86,33 @@
                                           <div class="modal-body">
 
                                         <main class="container">
-                                            <div id="carouselExampleIndicators" class="carousel slide">
-                                              <div class="carousel-indicators">
-                                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                                              </div>
-                                              <div class="carousel-inner">
-                                                <div class="carousel-item active">
-                                                  <img src="{{herb.image.url}}" class="d-block w-100 img-fluid" style="max-height: 450px; object-fit: none;">
+                                            <div id="carouselExampleIndicators{{herb.id}}" class="carousel slide">
+                                            <div class="carousel-indicators">
+                                                {% for herb_image in herb.herbimages_set.all %}
+                                                <button type="button" data-bs-target="#carouselExampleIndicators{{herb.id}}" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %} aria-label="Slide {{ forloop.counter }}">
+                                                </button>
+                                                {% endfor %}
+                                            </div>
+
+                                            <div class="carousel-inner">
+                                                {% for herb_image in herb.herbimages_set.all %}
+                                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                                    <img src="{{herb_image.images.url}}" class="d-block w-100 img-fluid" style="max-height: 450px; object-fit: none;">
                                                 </div>
-                                                <div class="carousel-item">
-                                                  <img src="{{herb.image.url}}" class="d-block w-100 img-fluid" style="max-height: 450px; object-fit: none;">
-                                                </div>
-                                                <div class="carousel-item">
-                                                  <img src="{{herb.image.url}}" class="d-block w-100 img-fluid" style="max-height: 450px; object-fit: none;">
-                                                </div>
-                                              </div>
-                                              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                                {% endfor %}
+                                            </div>
+
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators{{herb.id}}" data-bs-slide="prev">
                                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                                 <span class="visually-hidden">Previous</span>
-                                              </button>
-                                              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                            </button>
+
+                                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators{{herb.id}}" data-bs-slide="next">
                                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                                 <span class="visually-hidden">Next</span>
-                                              </button>
-                                            </div>
+                                            </button>
+                                          </div>
+
 
                                             <main id="content" class="main-area" style="color: #042807;">
                                               <section class="splash grid">
@@ -182,14 +183,14 @@
 
                                           <div class="row g-5">
                                             <div class="col-md-8">
-                                              <h3 class="pb-4 mb-4 fst-italic border-bottom">
+                                              <h3 class="pb-4 mb-1">
                                                 {{herb.name}}
                                               </h3>
 
                                               <article class="blog-post">
-                                                <h2 class="display-5 link-body-emphasis mb-1">{{herb.scientific_name}}</h2>
+                                                <h6 class="display-6 fst-italic link-body-emphasis mb-1">{{herb.scientific_name}}</h6>
                                                 <!-- <p class="blog-post-meta">January 1, 2021 by <a href="#">Mark</a></p> -->
-
+                                                <hr>
                                                 <p>{{ herb.description }}</p>
                                                 <hr>
                                                 <p></p>
@@ -314,7 +315,7 @@
                                                     {% for recent in herbs|slice:":3" %}
                                                     <li>
                                                       <a data-bs-toggle="modal" data-bs-target="#exampleModal{{recent.id}}" class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="content" >
-                                                        <img src="{{recent.image.url}}" width="100%" height="96">
+                                                        <img src="{{ recent.herbimages_set.first.images.url }}" width="100%" height="96">
                                                         <div class="col-lg-8">
                                                           <h6 class="mb-0">{{recent.name}}</h6>
                                                           <small class="text-body-secondary">{{herb.timestamp}}</small>
@@ -379,15 +380,15 @@
                                         <div class="d-flex mt-auto mb-3">
                                             <h4 class="text-white mb-0">{{herb.name}}</h4>
 
-                                            <p class="badge ms-4"><em>Cassia alata</em></p>
+                                            <p class="badge ms-4"><em>{{herb.scientific_name}}</em></p>
                                         </div>
 
                                         <p class="text-white mb-0">{{herb.description|slice:'80'}}</p>
                                     </div>
 
                                     <div class="team-block-image-wrap">
-                                      {% if herb.image %}
-                                        <img src="{{ herb.image.url }}" class="team-block-image img-fluid" alt="">
+                                      {% if herb.herbimages_set.all %}
+                                        <img src="{{ herb.herbimages_set.first.images.url }}" class="team-block-image img-fluid" alt="">
                                       {% else %}
                                         <img src="" class="team-block-image img-fluid" alt="">
                                       {% endif %}

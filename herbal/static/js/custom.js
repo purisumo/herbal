@@ -11,9 +11,9 @@
     $(function() {
       $('.hero-slides').vegas({
           slides: [
-              { src: '/static/image/slides/P1420366-1-scaled (1).jpg' },
-              { src: '/static/image/slides/Herbal-Therapy.jpg' },
-              { src: '/static/image/slides/perennialherbs-1200x800.jpg' }
+              { src: '/static/image/slides/Slide1.jpg' },
+              { src: '/static/image/slides/Slide2.jpg' },
+              { src: '/static/image/slides/Slide3.jpg' }
           ],
           timer: false,
           animation: 'kenburns',

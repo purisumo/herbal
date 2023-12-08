@@ -13,9 +13,9 @@
                                     </div>
 
                                     <div class="menu-block">
-                                        <div class="card">
+                                        <div class="card" >
                                         <div class="content">
-                                          <h2 class="title">Image Upload</h2>
+                                          <h2 class="title text-white">Image Upload</h2>
                                           <p class="copy">Click Here for Image upload and Image Capture (Mobile Optimized) </p>
                                            <a href="{% url 'recognition' %}"><button class="btn1">Go</button></a>
                                         </div>
@@ -33,7 +33,7 @@
                                         </div>
 
                                         <div class="border-top mt-2 pt-2">
-                                            <small>Choose an image of herbal plant to identify</small>
+                                            <small>Choose an image or capture herbal plant to identify</small>
                                         </div>
                                     </div>
 
@@ -48,9 +48,9 @@
                                     </div>
 
                                     <div class="menu-block">
-                                        <div class="card">
+                                        <div class="card custom-background">
                                           <div class="content">
-                                            <h2 class="title">Image Capture</h2>
+                                            <h2 class="title text-white" >Image Capture</h2>
                                             <p class="copy">Click here for Image Capture (PC optimized)</p>
                                             <a href="{% url 'cam-recognition' %}"><button class="btn1">Go</button></a>
                                           </div>
@@ -67,7 +67,7 @@
                                         </div>
 
                                         <div class="border-top mt-2 pt-2">
-                                            <small>Capture a Herbal plant to identify</small>
+                                            <small>Capture a Herbal plant to identify for laptop/desktop use</small>
                                         </div>
                                     </div>
 
@@ -163,11 +163,13 @@
   transition: transform calc(var(--d) * 2) var(--e);
 }
 .card:nth-child(1):before {
-  background-image: url('/static/image/slides/herbal-medicines-ss-18-scaled.webp');
+  background-image: url('/static/image/replicate-prediction-hcxghjbblfak6vbfz3kiz3vxpu.png');
 }
-.card:nth-child(2):before {
-  background-image: url('/static/image/slides/herbal-medicines-ss-18-scaled.webp');
+
+.card.custom-background:before {
+    background-image: url('/static/image/replicate-prediction-zgjbo7rbdtj6iydbt547fooemm.png');
 }
+
 
 .content {
   position: relative;

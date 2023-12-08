@@ -1,0 +1,51 @@
+{% extends 'Admin/index.html' %}
+{% load static %}
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+<h2>Herbal Add/Edit</h2>
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error:</strong> Please correct the following errors.
+    <ul>
+      {% for error in form.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+ <!-- herb-cms-man.html -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ herb_form.as_p }}
+        {% for form in herb_images_formset %}
+        {{ form.as_table }}
+    {% endfor %}
+    <button type="submit">Submit</button>
+</form>
+
+
+</div>
+<style>
+    .form-group {
+        margin-bottom: 10px;
+    }
+    label {
+        font-weight: bold;
+    }
+    input[type="text"], input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    button[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+    }
+</style>
+{% endblock %}

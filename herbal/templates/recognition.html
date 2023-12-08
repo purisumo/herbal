@@ -6,7 +6,7 @@
                       <div class="px-4 py-5 my-5">
                           <div class="col-lg-6 mx-auto">
                           <div class=" text-center">
-                            <form method="POST" enctype="multipart/form-data">
+                            <form class="processImagesButton" method="POST" enctype="multipart/form-data">
                               {% csrf_token %}
                               <input
                                 class="custom-file-upload custom-btn btn-15"
@@ -15,7 +15,8 @@
                                 name="image"
                                 id="file"
                               />
-                              <button class="compress_image custom-btn btn-2 mt-2 ms-4" type="submit" id="submitBtn">
+                              <button onclick="performAction()" class="
+                              compress_image custom-btn btn-2 mt-2 ms-4" type="submit" id="submitBtn">
                                 Predict
                               </button>
                               <div class="status">
@@ -23,14 +24,19 @@
                               </div>
                             </form>
                             
-                            <div class="wrapper">
-                              <img
+                            <div id="loadingOverlay" style="display: none;">
+                              <span  class="loader-6"> 
+
+                              </span>
+                            </div>
+
+                              <img id="img-res"
                                 src="{% if image_url %}{{ image_url }}{% else %}{% static '' %}{% endif %}"
-                                style="max-width: 400px; margin: 20px;"
+                                
                               />
                               </div>
                               <div class="info_container">
-                                <div class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); max-height:400px; border-radius: 0%; text-align: justify;">  
+                                <div id="div-res" class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); border-radius: 0%; text-align: justify;">  
                                 <table class="table team-block-info">
                                   <thead>
                                     <th scope="col" class="text-light">Labels</th>
@@ -43,7 +49,7 @@
                                       <td colspan="2" class="text-light">{{image.name}}</td>
                                     </tr>
                                     <tr>
-                                      <th scope="row" class="text-light">Prediction: </th>
+                                      <th scope="row" class="text-light">Classification: </th>
                                       {% if probability >= 0.60 %}
                                       <td colspan="2" class="text-light">{{prediction}}</td>
                                       {% elif probability >= 0.40 %}
@@ -58,9 +64,11 @@
                                       <th scope="row" class="text-light">Probability: </th>
                                       
                                       <td colspan="2" class="text-light">
+                                        {% if class_probabilities%}
                                         {% for class_name, probability in class_probabilities %}
-                                            {{ class_name }}: {{ probability }}<br>
+                                            Matched as: {{ probability|floatformat:2 }}% {{ class_name }} <br>
                                         {% endfor %}
+                                        {% endif %}
                                       </td>
                                       
                                     </tr>
@@ -83,8 +91,39 @@
                         </div>
                       </div>
                 </section>
+    <script>
+        function showLoading() {
+            // Display the loading overlay
+            document.getElementById("loadingOverlay").style.display = "block";
+        }
+
+        function hideLoading() {
+            // Hide the loading overlay
+            document.getElementById("loadingOverlay").style.display = "none";
+        }
+
+        function performAction() {
+            // Show loading overlay when the button is clicked
+            showLoading();
+
+            // Simulate an asynchronous action (e.g., AJAX request)
+            setTimeout(function () {
+                // Hide loading overlay when the action is complete
+                hideLoading();
+            }, 999999); // Adjust the time according to your use case
+        }
+    </script>
+
 <style>
-  
+#img-res{
+  max-width: 400px;
+  margin: 20px;
+}
+
+#div-res{
+   max-height:400px;
+}
+
   .btn-2 {
   background: rgb(96,9,240);
   background: linear-gradient(0deg, rgb(13, 240, 9)0%, rgb(5, 240, 115) 100%);
@@ -137,6 +176,13 @@
   input{
     max-width: 290px;
   }
+  #img-res{
+  max-width: 200px;
+  margin: 20px;
+}
+  #div-res{
+    height:750px;
+}
 }
 
 .ul-color{
@@ -148,4 +194,7 @@
   color: #f2f2f2;
 }
 </style>
+
+
+
 {% endblock %}

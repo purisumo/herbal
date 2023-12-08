@@ -186,7 +186,13 @@
                         <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{herb.name}}</strong></td>
                         <td>{{herb.testimonials.count}}</td>
                         <td>{{herb.favorites.count}}    </td>
-                        <td><a href="{{herb.image.url}}" class="badge bg-label-primary me-1">{{herb.image.name}}</a></td>
+                        {% if herb.herbimages_set.all %}
+                        <td>
+                          {% for herb_image in herb.herbimages_set.all %}
+                              <a href="{{ herb_image.images.url }}" class="badge bg-label-primary me-1">{{ herb_image.images.name }}</a>
+                          {% endfor %}
+                        </td>
+                        {% endif %}
                         <td>
                           <div class="dropdown">
                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">

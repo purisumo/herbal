@@ -47,7 +47,7 @@ urlpatterns = [
     path('Cam-recognition/', views.cam_recognition, name='cam-recognition'),
     # Herbs
     path('add/', views.add, name='add'),
-    path('edit/<str:pk>', edit.as_view(), name='edit'),
+    path('edit/<str:pk>', views.edit, name='edit'),
     path('delete/<int:id>', views.delete, name='delete'),
     # Herbs end
     path('deletecomment/<int:id>', views.deletecomment, name='deletecomment'),

@@ -1,1 +1,8 @@
-{"training_accuracy": 1.0, "validation_accuracy": 0.816, "validation_loss": 0.902, "num_classes": 31, "data_length": 3000}
+{
+    "training_accuracy": 0.7368420958518982,
+    "validation_accuracy": 0.0,
+    "training_loss": 0.4342823028564453,
+    "validation_loss": 1.79954195022583,
+    "num_classes": 2,
+    "data_length": 21
+}

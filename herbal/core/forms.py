@@ -10,7 +10,16 @@ class HerbForm(forms.ModelForm):
     class Meta:
         model = Herb
         fields = '__all__'
-        labels = '__all__'
+
+class HerbImagesForm(forms.ModelForm):
+    class Meta:
+        model = HerbImages
+        fields = ['images']  # Only include the 'images' field
+        widgets = {
+            'images': forms.FileInput(attrs={'multiple': True, 'accept': 'image/*'}),
+        }
+
+HerbImagesFormSet = forms.inlineformset_factory(Herb, HerbImages, form=HerbImagesForm, extra=1, can_delete=True)
 
 class HerbStore(forms.ModelForm):
     class Meta:

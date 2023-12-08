@@ -56,7 +56,7 @@
         }
     </style>
 
-<div class="contact-section section-padding" id="section_5" style="background-color: #57ba98;">
+<div class="contact-section section-padding" id="section_5" style="background-color: #57ba98; padding-top: 100px;">
     <div style="max-width: auto; margin: auto;">
         <div class="container-fluid">
     <div class="row">
@@ -76,7 +76,7 @@
                                     <input id="webimg" value="" name="src" type="text" style="display: none;">
                                     <canvas id="canvas"></canvas>
                                 </div>
-                                <button type="submit" class="button custom-btn btn-2" id="submit">Classify</button>
+                                <button onclick="performAction()" type="submit" class="button custom-btn btn-2" id="submit">Classify</button>
                             </form>
                         </div>
                     </div>
@@ -95,8 +95,17 @@
             </div>
             <br>
             </div>
-            <div class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); height: 270px; border-radius: 0%;">  
+            <div class="status">
+              <h3 id="message">{{ message }}</h3>
+            </div>
+            <div id="loadingOverlay" style="display: none;">
+                <span  class="loader-6"> 
+
+                  </span>
+            </div>
+            <div class="team-block-wrap" style="background-color: rgba(0, 0, 0, 0); height: 350px; border-radius: 0%;">  
               <table class="table team-block-info">
+                    
                       <thead>
                         <tr>
                           <th scope="col" class="text-light">Labels</th>
@@ -105,7 +114,7 @@
                       </thead>
                       <tbody>
                         <tr>
-                        <th scope="row" class="text-light">Prediction: </th>
+                        <th scope="row" class="text-light">Classification: </th>
                         {% if probability >= 0.60 %}
                         <td colspan="2" class="text-light">{{prediction}}</td>
                         {% elif probability >= 0.30 %}
@@ -119,8 +128,8 @@
                     <tr>
                         <th scope="row" class="text-light">Probability: </th>
                         <td colspan="2" class="text-light">
-                            {% for class_name, probability in class_probabilities.items %}
-                                {{ class_name }}: {{ probability }}<br>
+                            {% for class_name, probability in class_probabilities %}
+                                Matched as: {{ probability|floatformat:2 }}% {{ class_name }}<br>
                             {% endfor %}
                         </td>
                     </tr>
@@ -134,11 +143,11 @@
                       </th>
                     </tr>
                     {% endif %}
+                    
                 </tbody>
+                
               </table>
-            <div class="status">
-                <h3 id="message">{{ message }}</h3>
-            </div>
+            
             </div>  
         </div>
         </div>
@@ -147,6 +156,28 @@
 
     </div>
 </div>
+    <script>
+        function showLoading() {
+            // Display the loading overlay
+            document.getElementById("loadingOverlay").style.display = "block";
+        }
+
+        function hideLoading() {
+            // Hide the loading overlay
+            document.getElementById("loadingOverlay").style.display = "none";
+        }
+
+        function performAction() {
+            // Show loading overlay when the button is clicked
+            showLoading();
+
+            // Simulate an asynchronous action (e.g., AJAX request)
+            setTimeout(function () {
+                // Hide loading overlay when the action is complete
+                hideLoading();
+            }, 999999); // Adjust the time according to your use case
+        }
+    </script>
 <script>
     (function () {
         var width = 500; // Set the desired width for the camera video

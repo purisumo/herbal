@@ -10,6 +10,21 @@
   </head>
   <body>
 <div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="padding-top: 150px;">
+    <div class="modal-content alert alert-info">
+      <div class="modal-header alert alert-info">
+        <h5> For Email Verification </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body alert alert-info">
+        <p>Note: To resend verification please enter the registered Email adress </p>
+        <br>
+        <p>Note: Only Fill out the email adress and leave blank for the rest </p>
+      </div>
+    </div>
+  </div>
+</div>
 <div style="align-self: baseline;">
 {% if messages %}
 {% for message in messages %}
@@ -22,11 +37,13 @@
 </div>
                 
 <div class="form-structor">
+  
   <form method="post" action="{% url 'login_or_register' %}">
     {% csrf_token %}
 	<div class="signup">
-		<h2 class="form-title" id="signup"><span>or</span>Sign up</h2>
-		<div class="form-holder">
+		<h2 class="form-title" id="signup"><span></span>Sign up</h2>
+    
+		<div class="form-holder" >
 			<input type="text" class="input" name="username" placeholder="Username" />
 			<input type="email" class="input" name="email" placeholder="Email" />
 			<input type="password" class="input" name="password" placeholder="Password" />
@@ -34,6 +51,9 @@
 		</div>
     <input type="hidden" name="action" value="register">
 		<button class="submit-btn" type="submit">Sign up</button>
+    <div class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    ?
+    </div>
 	</div>
   </form>
 
@@ -48,6 +68,7 @@
 			</div>
       <input type="hidden" name="action" value="login">
 			<button class="submit-btn" type="submit" >Log in</button>
+      <a href="{% url 'password_reset' %}" class=" ms-1 text-decoration-none "><small>Forget Password</small></a>
       <br><br>
       <div class="wrap">
         <a class="button" href="{% url 'home' %}"> <div style="margin: auto; padding-top: 15px;">Back to Site</div></a>

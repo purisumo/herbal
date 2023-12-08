@@ -16,7 +16,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from django.contrib import messages
-from django.http import HttpResponseServerError, Http404, JsonResponse, HttpResponse
+from django.http import HttpResponseServerError, Http404, JsonResponse, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
 from django.db.models import Q
 from django.conf import settings
@@ -30,11 +30,13 @@ from django.views.generic import CreateView, UpdateView
 from django.core.files.storage import default_storage
 from django.urls import reverse_lazy, reverse
 from zipfile import ZipFile
+from django.views.decorators.csrf import csrf_exempt
 
 import json
 import logging
 from registration.models import User
 
+from django.db import transaction
 from django.db.models import Count, DateField
 from datetime import datetime
 from django.db.models.functions import TruncWeek, TruncHour, TruncDate
@@ -52,7 +54,7 @@ from .models import *
 def suggest_similarities(herbs):
     # Extract relevant fields from herbs
     text_fields = ['description', 'med_property', 'med_use']
-    herb_texts = [' '.join(getattr(herb, field, '') for field in text_fields) for herb in herbs]
+    herb_texts = [' '.join(str(getattr(herb, field, '')) for field in text_fields) for herb in herbs]
 
     # Use CountVectorizer to convert herb texts into a bag-of-words representation
     vectorizer = CountVectorizer()
@@ -95,13 +97,14 @@ def home(request):
 def herbs(request):
 
     herbs = Herb.objects.all()
+    favorite_herbs = []
 
     if request.user.is_authenticated:
         # If authenticated, get the favorite_herbs
-        favorite_herbs = request.user.favorite_set.all().values_list('herb', flat=True)
-    else:
-        # If not authenticated, set favorite_herbs to an empty list or handle it as appropriate
-        favorite_herbs = []
+        favorite_set = getattr(request.user, 'favorite_set', None)
+        if favorite_set:
+            favorite_herbs = favorite_set.all().values_list('herb', flat=True)
+
     # Usage:
     suggested_similarities = suggest_similarities(herbs)
     # Get the total number of herbs
@@ -459,51 +462,116 @@ def toggle_favorite(request, herb_id):
 
 @staff_member_required(login_url='/login_or_register')
 def add(request):
-
-    form = HerbForm()
     if request.method == 'POST':
-        form = HerbForm(request.POST, request.FILES)
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.save()
-            return redirect('dashboard')
-        
-    return render(request, 'herb-cms.html', {'form':form})
+        # Extract form data directly from request.POST and request.FILES
+        name = request.POST.get('name')
+        scientific_name = request.POST.get('scientific_name')
+        lat = request.POST.get('lat')
+        long = request.POST.get('long')
+        description = request.POST.get('description')
+        med_property = request.POST.get('med_property')
+        med_use = request.POST.get('med_use')
+        habitat = request.POST.get('habitat')
+        potential_SE = request.POST.get('potential_SE')
 
-class edit(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Herb
-    fields = '__all__'
-    success_url = reverse_lazy('dashboard')
-    template_name = 'herb-cms.html'
+        try:
+            # Create Herb instance and save
+            herb = Herb(
+                name=name,
+                scientific_name=scientific_name,
+                lat=lat,
+                long=long,
+                description=description,
+                med_property=med_property,
+                med_use=med_use,
+                habitat=habitat,
+                potential_SE=potential_SE,
+                timestamp=datetime.now()  # Assuming you want to set the timestamp
+            )
+            herb.save()
 
-    def test_func(self):
-        return self.request.user.is_staff or self.request.user.is_superuser
-    
-    def post(self, request, *args, **kwargs):
-        # Get the existing object
-        self.object = self.get_object()
+            # Process images
+            images = request.FILES.getlist('image')
+            for image in images:
+                herb_image = HerbImages(herb=herb, images=image)
+                herb_image.save()
 
-        # Delete previous image if it exists
-        previous_image = self.object.image
-        if previous_image:
-            default_storage.delete(previous_image.path)
+            return redirect('herbal_upload')
 
-        return super().post(request, *args, **kwargs)
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
+    return render(request, 'herb-cms-man.html')
+
+@staff_member_required(login_url='/login_or_register')
+def edit(request, pk):
+    herb = get_object_or_404(Herb, pk=pk)
+
+    # Check if the user is staff or superuser
+    if not (request.user.is_staff or request.user.is_superuser):
+        return HttpResponseForbidden("You do not have permission to edit this herb.")
+
+    if request.method == 'POST':
+        # Use a transaction to ensure consistency
+        with transaction.atomic():
+            # Check if the user wants to remove existing images
+            remove_images = request.POST.get('remove_images')
+            if remove_images and remove_images != "0":
+                for herb_image in herb.herbimages_set.all():
+                    # Get the path to the image file
+                    image_path = herb_image.images.path
+
+                    # Delete the HerbImages object
+                    herb_image.delete()
+
+                    # Delete the image file from storage
+                    default_storage.delete(image_path)
+
+            # Handle the image file
+            images = request.FILES.getlist('image')
+            for image in images:
+                herb_image = HerbImages(herb=herb, images=image)
+                herb_image.save()
+
+            # Use the update method to update the model instance
+            herb.name = request.POST.get('name')
+            herb.scientific_name = request.POST.get('scientific_name')
+            herb.lat = request.POST.get('lat')
+            herb.long = request.POST.get('long')
+            herb.description = request.POST.get('description')
+            herb.med_property = request.POST.get('med_property')
+            herb.med_use = request.POST.get('med_use')
+            herb.habitat = request.POST.get('habitat')
+            herb.potential_SE = request.POST.get('potential_SE')
+
+            # Save the updated herb instance
+            herb.save()
+
+            # Redirect to the dashboard or any other desired URL
+            return redirect('herbal_upload')
+
+    # If it's a GET request, render the form with the existing herb instance
+    return render(request, 'herb-cms-man.html', {'herb': herb})
     
 @staff_member_required(login_url='/login_or_register')
 def delete(request, id):
     herb = Herb.objects.get(id=id)
 
-    # Get the path to the image file
-    image_path = herb.image.path
+    # Delete the associated HerbImages objects and their image files
+    for herb_image in herb.herbimages_set.all():
+        # Get the path to the image file
+        image_path = herb_image.images.path
+
+        # Delete the HerbImages object
+        herb_image.delete()
+
+        # Delete the image file from storage
+        default_storage.delete(image_path)
 
     # Delete the Herb object
     herb.delete()
 
-    # Delete the image file from storage
-    default_storage.delete(image_path)
-
-    return redirect('dashboard')
+    return redirect('herbal_upload')
 
 @login_required(login_url='/login_or_register')
 def deletecomment(request, id):
@@ -533,18 +601,27 @@ def recognition_prediction(request):
 
     return render(request, 'herbs.html', {'herbs': herbs})
 
+@csrf_exempt
+@login_required(login_url='/login_or_register')
 def recognition(request):
     message = ""
-
     with open('class_mapping.json', 'r') as file:
         loaded_class_mapping_json = file.read()
 
-    class_mapping = json.loads(loaded_class_mapping_json)
-    class_mapping = {int(key): value for key, value in class_mapping.items()}
-    print(class_mapping)
+    # def send_update(percentage):
+    #     return JsonResponse({"percentage": percentage})
+    # print(class_mapping)
     # prediction = ""
     fss = CustomFileSystemStorage()
+    
     try:
+        total_steps = 5
+
+        class_mapping = json.loads(loaded_class_mapping_json)
+        class_mapping = {int(key): value for key, value in class_mapping.items()}
+
+        # send_update(20)
+
         image = request.FILES["image"]
         print("Name", image.file)
         _image = fss.save(image.name, image)
@@ -559,11 +636,17 @@ def recognition(request):
         test_image = np.expand_dims(resized_image, axis=0)
         test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
+        # send_update(40)
+
         # Load model
         model = tf.keras.models.load_model('best_model.h5')
 
-        result = model.predict(test_image)
+        # send_update(60)
         
+        result = model.predict(test_image)
+
+        # send_update(80)
+
         predicted_class_index = np.argmax(result)
         predicted_class_probability = result[0][predicted_class_index]
 
@@ -589,6 +672,8 @@ def recognition(request):
 
         print( 'index' + str(predicted_class_index))
 
+        # send_update(100)
+
         return TemplateResponse(
             request,
             "recognition.html",
@@ -601,13 +686,12 @@ def recognition(request):
                 'class_probabilities':class_probabilities,
             },
         )
-    except MultiValueDictKeyError:
-        return TemplateResponse(
-            request,
-            "recognition.html",
-            {"message": "No Image Selected"},
-        )
+    except Exception as e:
+        print(f"Error: {str(e)}")
 
+    return render(request, 'recognition.html')
+
+@login_required(login_url='/login_or_register')
 def cam_recognition(request):
 
     with open('class_mapping.json', 'r') as file:
@@ -618,63 +702,64 @@ def cam_recognition(request):
 
     if request.method == 'POST':
         image_data_uri = request.POST.get("src")
+        if not image_data_uri:
+            return render(request, 'cam-recognition.html', {'message': "Missing 'Image' please take an image first."})
+        else:
+            try:
+                # Extract the base64-encoded image data from the data URI
+                _, image_data = image_data_uri.split(",", 1)
+                image_bytes = base64.b64decode(image_data)
 
-        try:
-            # Extract the base64-encoded image data from the data URI
-            _, image_data = image_data_uri.split(",", 1)
-            image_bytes = base64.b64decode(image_data)
+                # Create a BytesIO stream from the image data
+                image_stream = io.BytesIO(image_bytes)
 
-            # Create a BytesIO stream from the image data
-            image_stream = io.BytesIO(image_bytes)
+                # Load the image with OpenCV
+                imag = cv2.imdecode(np.frombuffer(image_stream.read(), np.uint8), cv2.IMREAD_COLOR)
+                img_from_ar = Image.fromarray(imag, 'RGB')
+                resized_image = img_from_ar.resize((299, 299))
+                test_image = np.expand_dims(resized_image, axis=0)
+                test_image = test_image.astype('float32') / 255.0  # Normalize the image
 
-            # Load the image with OpenCV
-            imag = cv2.imdecode(np.frombuffer(image_stream.read(), np.uint8), cv2.IMREAD_COLOR)
-            img_from_ar = Image.fromarray(imag, 'RGB')
-            resized_image = img_from_ar.resize((224, 224))
-            test_image = np.expand_dims(resized_image, axis=0)
-            test_image = test_image.astype('float32') / 255.0  # Normalize the image
+                # Load model
+                model = tf.keras.models.load_model('best_model.h5')
+                result = model.predict(test_image)
 
-            # Load model
-            model = tf.keras.models.load_model('best_model.h5')
-            result = model.predict(test_image)
+                predicted_class_index = np.argmax(result)
+                predicted_class_probability = result[0][predicted_class_index]
+                # Set a threshold for class probability
 
-            predicted_class_index = np.argmax(result)
-            predicted_class_probability = result[0][predicted_class_index]
-            # Set a threshold for class probability
+                confidence_threshold = 0.1  # Adjust this threshold as needed
 
-            confidence_threshold = 0.1  # Adjust this threshold as needed
+                # Check if any class probability exceeds the threshold
+                print('probability' + str(predicted_class_probability))
 
-            # Check if any class probability exceeds the threshold
-            print('probability' + str(predicted_class_probability))
-
-            top_3_probabilities = {class_mapping[i]: result[0][i]  * 100 for i in range(len(class_mapping))}
-            # Sort the dictionary by values in descending order
-            sorted_probabilities = sorted(top_3_probabilities.items(), key=lambda x: x[1], reverse=True)
-            # Take only the top 3 entries
-            class_probabilities = sorted_probabilities[:3]
-
-            if predicted_class_probability < confidence_threshold:
-                predicted_class_name = "Unknown"
-            else:
-                if predicted_class_index in class_mapping:
-                    predicted_class_name = class_mapping[predicted_class_index]
-                else:
+                top_3_probabilities = {class_mapping[i]: result[0][i]  * 100 for i in range(len(class_mapping))}
+                # Sort the dictionary by values in descending order
+                sorted_probabilities = sorted(top_3_probabilities.items(), key=lambda x: x[1], reverse=True)
+                # Take only the top 3 entries
+                class_probabilities = sorted_probabilities[:3]
+                print(class_probabilities)
+                if predicted_class_probability < confidence_threshold:
                     predicted_class_name = "Unknown"
+                else:
+                    if predicted_class_index in class_mapping:
+                        predicted_class_name = class_mapping[predicted_class_index]
+                    else:
+                        predicted_class_name = "Unknown"
 
-            print( 'index' + str(predicted_class_index))
+                print( 'index' + str(predicted_class_index))
 
-            context = {
-                'class_probabilities': class_probabilities,
-                'prediction': predicted_class_name,
-                'probability': predicted_class_probability,
-            }
+                context = {
+                    'class_probabilities': class_probabilities,
+                    'prediction': predicted_class_name,
+                    'probability': predicted_class_probability,
+                }
 
-            return render(request, "cam-recognition.html", context)
+                return render(request, "cam-recognition.html", context)
 
-        except Exception as e:
-            # Handle errors gracefully
-            return HttpResponseServerError(f"Error: {str(e)}")
-
+            except Exception as e:
+                # Handle errors gracefully
+                return HttpResponseServerError(f"Error: {str(e)}")
     return render(request, 'cam-recognition.html')
 
 
@@ -877,7 +962,7 @@ def deleteuser(request, id):
         messages.success(request, 'User deleted successfully')
     except Exception as e:
         messages.error(request, f'Error deleting User: {str(e)}')
-    return redirect('/dashboard')
+    return redirect('dash_herb_user')
 
 def toggle_user_activation(request, user_id):
     # Retrieve the user from the database
@@ -895,14 +980,13 @@ def toggle_user_activation(request, user_id):
 @staff_member_required(login_url=reverse_lazy('login_or_register'))
 def herbal_upload(request):
     herbs = Herb.objects.all()
-
+    for herb in herbs:
+        print(f"Herb: {herb.name}, Images: {herb.herbimages_set.all()}")
     context = {
         'herbs': herbs
     }
 
     return render(request, 'Admin/herbal-uploads.html', context)
-
-from django.views.decorators.csrf import csrf_exempt
 
 def download_processed_data(request):
     media_root = settings.MEDIA_ROOT
@@ -977,7 +1061,7 @@ def dataset_upload(request):
     images = None
     
     datasets = Datasets.objects.order_by('class_name')
-    
+
     try:
         if request.method == 'POST':
             class_name = request.POST.get('class_name')
@@ -1021,20 +1105,16 @@ def delete_dataset(request, id):
     com = get_object_or_404(Datasets, id=id)
 
     # Delete associated images
-    for image in com.images.all():
-        try:
-            # Delete the image file from storage
-            default_storage.delete(image.images.path)
-        except ValueError:
-            # Handle the case where image.images.path is None
-            pass
-
-        # Delete the DatasetImages object
-        image.delete()
-
-    # Clear the many-to-many relationship to avoid IntegrityError
-    com.images.clear()
-
+    # for image in com.images.all():
+    #     try:
+    #         image_path = image.images.path
+    #                 # Delete the HerbImages object
+    #         image.delete()
+    #                 # Delete the image file from storage
+    #         default_storage.delete(image_path)
+    #     except ValueError:
+    #         # Handle the case where image.images.path is None
+    #         pass
     # Delete the Datasets object
     com.delete()
 

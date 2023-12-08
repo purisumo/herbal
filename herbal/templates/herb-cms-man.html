@@ -1,0 +1,96 @@
+{% extends 'Admin/index.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+<h2>Herbal Add/Edit</h2>
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error:</strong> Please correct the following errors.
+    <ul>
+      {% for error in form.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_name">Name</label>
+        <input type="text" name="name" class="form-control" id="id_name" value="{{ herb.name }}">
+    </div>
+    <div class="form-group">
+        <label for="id_name">scientific_name</label>
+        <input type="text" name="scientific_name" class="form-control" id="id_name" value="{{ herb.scientific_name }}">
+    </div>
+    <div class="form-group">
+        <label for="id_name">Latitude</label>
+        <input type="text" name="lat" class="form-control" id="id_name" value="{{ herb.lat }}">
+    </div>
+    <div class="form-group">
+        <label for="id_name">Longitude</label>
+        <input type="text" name="long" class="form-control" id="id_name" value="{{ herb.long }}">
+    </div>
+    <div class="form-group">
+        <label for="id_name">Description</label>
+        <textarea name="description" class="form-control" id="id_name" value="" style="min-height: 15rem;">{{ herb.description }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="id_name">Medicinal Property</label>
+        <textarea name="med_property" class="form-control" id="id_name" value="" style="min-height: 15rem;">{{ herb.med_property }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="id_name">Medicinal Use</label>
+        <textarea name="med_use" class="form-control" id="id_name" value="" style="min-height: 15rem;">{{ herb.med_use }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="id_name">Habitat</label>
+        <textarea name="habitat" class="form-control" id="id_name" value="" style="min-height: 15rem;">{{ herb.habitat }}</textarea>
+    </div>
+    <div class="form-group">
+        <label for="id_name">Potential Side Effect</label>
+        <textarea name="potential_SE" class="form-control" id="id_name" value="" style="min-height: 15rem;">{{ herb.potential_SE }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="id_image">Image</label>
+        <input type="file" name="image" class="form-control" id="id_image" multiple>
+    </div>
+    <!-- Hidden field to indicate image removal -->
+    <input type="hidden" name="remove_images" value="0">
+
+    <!-- Checkbox to allow the user to indicate the removal of existing images -->
+    <div class="form-group form-check">
+        <input type="checkbox" name="remove_images" class="form-check-input" id="id_remove_images">
+        <label class="form-check-label" for="id_remove_images">Remove existing images</label>
+    </div>
+    <button type="submit">Proceed</button>
+</form>
+
+</div>
+<style>
+    .form-group {
+        margin-bottom: 10px;
+    }
+    label {
+        font-weight: bold;
+    }
+    input[type="text"], input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    button[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+    }
+</style>
+{% endblock %}

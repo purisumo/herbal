@@ -28,13 +28,20 @@ class Herb(models.Model):
     habitat = models.TextField(blank=True, null=True)
     potential_SE = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='Herbs/', blank=True)
+    image = models.ManyToManyField('HerbImages', related_name='herbimages', blank=True)
 
     def __str__(self):
         return self.name
     
     def display_name(self):
         return self.name
+
+class HerbImages(models.Model):
+    herb = models.ForeignKey(Herb, default=None, on_delete=models.CASCADE, null=True, blank=True)
+    images = models.ImageField(upload_to='HerbalImages/', verbose_name='Image', blank=True)
+
+    def __str__(self):
+        return self.images.name
 
 class Testimonials(models.Model):
     name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='testimony')
@@ -95,7 +102,7 @@ def upload_to_dataset(instance, filename):
 
 class Datasets(models.Model):
     class_name = models.TextField(max_length=255, blank=False, null=True)
-    images = models.ManyToManyField('DatasetImages', related_name='datasetimages', blank=True)
+    images = models.ManyToManyField('DatasetImages', related_name='datasetsimages', blank=True)
 
     def __str__(self):
         return self.class_name

@@ -4,21 +4,51 @@
 {% block content %}
 <div class="container-xxl flex-grow-1 container-p-y">
 <h2>Herbal Add/Edit</h2>
+{% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Error:</strong> Please correct the following errors.
+    <ul>
+      {% for error in form.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
       <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% for field in form %}
-          {% if field.widget.input_type == 'checkbox' %}
-            <div class="form-group form-check">
-              {{ field }}
-              <label autocomplete="off" class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-            </div>
-          {% else %}
-            <div class="form-group">
-              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-              {{ field|add_class:"form-control" }}
-            </div>
-          {% endif %}
+        <!-- Render herb_form fields -->
+        {% for field in herb_form %}
+            {% if field.widget.input_type == 'checkbox' %}
+                <div class="form-group form-check">
+                    {{ field }}
+                    <label autocomplete="off" class="form-check-label" for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                </div>
+            {% else %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                    {{ field|add_class:"form-control" }}
+                </div>
+            {% endif %}
         {% endfor %}
+
+        <!-- Render herb_images_formset forms -->
+        {% for form in herb_images_formset %}
+            {% for field in form %}
+                {% if field.widget.input_type == 'checkbox' %}
+                    <div class="form-group form-check">
+                        {{ field }}
+                        <label autocomplete="off" class="form-check-label" for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                        {{ field|add_class:"form-control" }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
         <button type="submit">Proceed</button>
       </form>
 </div>
