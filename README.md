@@ -11,3 +11,10 @@ Features
 - Model Upload
 - Model Training
 - Management(Users, Herbals, Coordinates)
+
+
+[Technical Details]
+Backend - Django
+CNN Model - Tensorflow
+Frontend - Bootstrap, Jquery
+
