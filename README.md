@@ -14,7 +14,10 @@ Features
 
 
 [Technical Details]
+
 Backend - Django
+
 CNN Model - Tensorflow
+
 Frontend - Bootstrap, Jquery
 
